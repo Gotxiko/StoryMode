@@ -68,6 +68,7 @@ SM.ClassicWarlockQuestData = {
         },
         {
             chapter = "Succubus",
+            follows = false,
             requiredLevel = 20,
             summary = "Your trainer thinks you're ready for a subtler demon than the voidwalker. A succubus takes more than a strong will to bind, and your trainer knows who can tell you what else it takes. Subtle things rarely come cheap.",
             recapAlliance = "Gakin the Darkbinder is a patient teacher, as long as you don't mind being sent across the sea for your lessons.\n\nA succubus needs the right focus, and Gakin sent me to Takar the Seer in the Barrens to learn what it was. Takar sent me north into Ashenvale for heartswood. I came back with it, and Gakin turned it into the Heartswood Core.\n\nThen the circle. I called, and a succubus answered. They always look you over first, as though they're the ones doing the choosing. She looked. I subdued her. We've had an understanding ever since.\n\nShe's charming, vicious and doesn't like me one bit, and I wouldn't trade her for any bodyguard in Stormwind. You always know where you stand with a demon. Usually it's slightly too close.",
@@ -109,6 +110,7 @@ SM.ClassicWarlockQuestData = {
         },
         {
             chapter = "Felhunter",
+            follows = false,
             requiredLevel = 30,
             summary = "Your trainer sends you down to Ratchet to find Strahad Farsan, who knows how to bind a felhunter. A felhunter eats magic. You'll want to be very sure of the binding before you try it.",
             recapAlliance = "A felhunter eats magic. That's the whole appeal. The trouble is you need a book to bind one, and the book was in pieces.\n\nStrahad Farsan down in Ratchet knew the binding, and Krom Stoutarm back in Ironforge knew books, and I spent a good while carrying scraps of moldy paper between the two of them. Eventually Krom had the thing put back together, and Strahad put the Tome of the Cabal in my hands.\n\nI drew the circle, and a felhunter came through starving, and I am, to a felhunter, a walking supper. I got the binding on it before it got a taste.\n\nNow it trots at my heel and sniffs at every mage we pass. I keep my own spellbooks off the floor.",
@@ -129,6 +131,7 @@ SM.ClassicWarlockQuestData = {
         },
         {
             chapter = "Felsteed",
+            follows = false,
             requiredLevel = 40,
             summary = "Your trainer sends you down to Ratchet, to Strahad Farsan, who knows how a warlock's mount is called. No stable sells one. It comes from somewhere a good deal warmer than Ratchet.",
             recap = "Most people buy a horse. Warlocks get sent to Ratchet.\n\nMy trainer pointed me back down to Strahad Farsan, who by then was practically family, to learn to summon a felsteed. It isn't bought and it isn't bred. You call it, it comes, and it carries you, and it would very much like everybody to know it's from somewhere worse than here.\n\nI've never named mine. It wouldn't answer to it anyway. But it doesn't tire, it doesn't spook, and it has never once wanted a stable or a bucket of oats. The hooves are on fire, mind. Keep it away from anybody's haystack.\n\nA warlock's mount ought to frighten people a little. It saves on conversation.",
@@ -140,6 +143,7 @@ SM.ClassicWarlockQuestData = {
         },
         {
             chapter = "Dreadsteed",
+            follows = false,
             requiredLevel = 60,
             summary = "The demon trainer in the city has a name for you: Mor'zul Bloodbringer, out in the Burning Steppes. Mor'zul knows how to call a dreadsteed of Xoroth, and doesn't share that with just anyone.",
             recap = "Anyone can call a felsteed. A dreadsteed of Xoroth you earn, and Mor'zul Bloodbringer in the Burning Steppes made very sure I knew it.\n\nThe shopping list for that ritual would make a dragon weep, partly because thirty-five black dragonscales were on it. But my favorite errand was the imp. Gorzeeki Wildeyes handed me an imp in a jar and had me take it to school. The Scholomance, I mean. It needed their alchemy lab to make a parchment. Only imp I know with an education.\n\nAt the end, in Dire Maul, I set it all out and called. The dreadsteed came through furious. I put it down, and when its spirit rose, I bound it.\n\nIt's still cross about that. We get along fine.",

@@ -105,6 +105,7 @@ SM.ClassicRogueQuestData = {
         },
         {
             chapter = "Ravenholdt",
+            follows = false,
             requiredLevel = 24,
             summary = "Your trainer slips you a seal with a raven on it. Take it to Fahrad at Ravenholdt Manor, hidden in the hills of Hillsbrad. Be ready: your cunning gets tested on the way.",
             recap = "Somebody in the city who knows somebody slips me a seal with a raven on it. Ravenholdt. It's a manor up in the hills above Hillsbrad where the best of us keep house, and you don't just walk up and knock. There's a test of cunning on the way in. I'm writing this, so you can guess how that went.\n\nFahrad met me inside. Lovely old place. Everybody's very polite and nobody turns their back on you. I liked it right away.",

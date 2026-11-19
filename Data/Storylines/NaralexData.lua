@@ -106,6 +106,7 @@ SM.NaralexData = {
         },
         {
             chapter = "Waking Naralex",
+            follows = false,
             requiredLevel = 15,
             summary = "Just inside the Wailing Caverns, a Disciple of Naralex waits for the four Fanglords to fall. Once they have, the disciple means to walk all the way down to the sleeping druid and wake him, and will need protecting every step.",
             recapAlliance = "With the Fanglords dead, the disciple waiting inside the caverns finally had a clear road and someone to stand in front. We walked all the way down. Every time the disciple stopped to cast, the caverns sent something to interrupt, and I interrupted back.\n\nNaralex lay at the bottom, tossing in his sleep. The disciple reached into the dream after him, and Naralex, not helping, dreamed up something huge and hungry that climbed out of the water. It went down. Naralex woke with a shout, thanked us kindly, and left to find the rest of his disciples.\n\nThe beast left a glowing green shard behind. Someone in Ratchet sent me back toward the caverns to Falla Sagewind, who called it a nightmare and said it belonged with a wise druid. Mathrengyl Bearwalker, all the way over in Darnassus, looked into it, said things in the Emerald Dream were not as anyone had thought, and that the Cenarion druids alone would attend to it. I took the hint.",

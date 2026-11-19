@@ -77,6 +77,7 @@ SM.ArugalData = {
         },
         {
             chapter = "Ambermill",
+            follows = false,
             summary = "Shadow Priest Allister at the Sepulcher has a new worry: Dalaran. Its wizards have taken an interest in Ambermill, and their crates keep turning up at a camp north of Pyrewood Village. Allister wants to know what's inside.",
             recap = "Shadow Priest Allister had a different worry: Dalaran. A band of their wizards had settled in at Ambermill, and they had crates moving along the road north of Pyrewood. I helped myself to one. Inside was a pendant scratched all over with runes.\n\nDalar Dawnweaver had a look and decided the wizards were digging into old magic under Silverpine. The kind Dalaran gets very excited about and everybody else comes to regret. Allister wanted more of those pendants, which meant a good few wizards who no longer needed them.\n\nAt the top of it all was the Weaver, Archmage Ataeric. I took his staff off him the direct way and handed it to Allister. Very nice staff. It seemed a shame to hand it over.",
             quests = {
@@ -91,6 +92,7 @@ SM.ArugalData = {
         },
         {
             chapter = "Shadowfang Keep",
+            follows = false,
             summary = "Everyone at the Sepulcher has business in Shadowfang Keep. High Executor Hadrec sent two deathstalkers in, and they haven't come back. Dalar Dawnweaver wants Arugal's head. In the Undercity's Apothecarium, Keeper Bel'dugur wants a book.",
             recap = "Everything in Silverpine ends up pointing at Shadowfang Keep sooner or later, so I stopped arguing and went in.\n\nEverybody wanted something out of there. The High Executor wanted to know what had become of two missing deathstalkers. A keeper in the Apothecarium wanted a book called the Book of Ur. And Dalar Dawnweaver wanted Arugal's head. Just the head. Dalar was very clear on that.\n\nI found the deathstalkers. Only one of them was in any shape to talk. I found the book. And I found Arugal at the top of his keep, with worgen at every turn on the way up, and he made me work for every step.\n\nThe book went to the Undercity and the head went to the Sepulcher. That's about as tidy as Silverpine ever gets.",
             quests = {

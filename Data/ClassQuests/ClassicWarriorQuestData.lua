@@ -76,6 +76,7 @@ SM.ClassicWarriorQuestData = {
         },
         {
             chapter = "Whirlwind Weapon",
+            follows = false,
             requiredLevel = 30,
             summary = "Your trainer sends you to Klannoc Macleod, the Islander, who runs a fighting pit on Fray Island in the Barrens. Warriors go there to find out what they're made of. Bring a good weapon and a thick skull.",
             recap = "Here's how I got this.\n\nThe Islander runs a fighting pit on Fray Island, out in the Barrens. You step on the grate and they come at you, one after another, and then Big Will comes. Big Will is well named. I put Big Will on the ground.\n\nThat got me sent to Bath'rah the Windwatcher, up in the Alterac hills. Bath'rah wanted charms and tusks and roots, a cauldron's worth, all to call up an air elemental named Cyclonian.\n\nCyclonian came. Cyclonian is a storm with a temper. I hit it until it stopped being a storm, and I took its heart.\n\nBath'rah set the heart into the weapon I chose. Now it spins. So does anybody standing too close.",

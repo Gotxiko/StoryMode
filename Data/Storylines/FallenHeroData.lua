@@ -90,6 +90,7 @@ SM.FallenHeroData = {
         },
         {
             chapter = "A Tale of Sorrow",
+            follows = false,
             summaryAlliance = "Ambassador Ardalan at Nethergarde Keep has an odd errand for you: go and hear out a Horde ghost. The Fallen Hero of the Horde waits on the road where the Blasted Lands meet the swamp, with a story to tell.",
             summaryHorde = "The Fallen Hero of the Horde isn't done talking. On his road at the edge of the Blasted Lands, he has the rest of his story to tell: what became of the soldiers who crossed over.",
             recapAlliance = "An ambassador at Nethergarde Keep had an errand for me I didn't see coming: go and talk to a Horde ghost. With demons camped on the doorstep, I suppose the old squabbles can wait.\n\nThe Fallen Hero of the Horde stands where the swamp gives way to the Blasted Lands, and he told me all of it. Soldiers who crossed over, and what Razelikh the Defiler's people did with them after. Out there the dead don't get to rest. They get bound to stones and put to work.\n\nSo he gave me a job: set them loose, eighteen of them, at the Stones of Binding. You have to stay right by the stone while you work or it all comes apart, and fighting well while rooted to one spot is harder than it sounds.\n\nOdd work for the Alliance. The dead don't seem to mind whose colors you wear.",

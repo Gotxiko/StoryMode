@@ -158,6 +158,7 @@ SM.ScarletCrusadeData = {
         },
         {
             chapter = "Graveyard and Library",
+            follows = false,
             summaryAlliance = "Librarian Mae Paledust, in Ironforge's Hall of Explorers, wants one book: the Mythology of the Titans. The copy Mae has in mind sits in the library of the Scarlet Monastery in Tirisfal Glades, and the Crusade doesn't lend.",
             summaryHorde = "Deep in the Scarlet Monastery's graveyard, in Tirisfal Glades, a prisoner named Vorrel Sengutz is waiting for someone to get that far. The library has customers too: Sage Truthseeker, in Thunder Bluff, wants a book off its shelves.",
             recapAlliance = "Librarian Mae Paledust works in the Hall of Explorers in Ironforge and wanted one book in particular, the Mythology of the Titans. The copy Mae had in mind was sitting in the library of the Scarlet Monastery, where, as far as I could tell, nobody was reading it.\n\nSo a few of us went in to borrow a book. That's how I put it to myself, anyway. The Library wing is long halls, tall shelves and a great many serious people in red who don't care for visitors. Borrowing took some doing.\n\nWe came out with the book. Mae took it the way most people take a newborn, very carefully and without looking at anyone else in the room. I've had warmer thanks. I've rarely seen anybody happier, though, and I've watched people find gold.",
@@ -191,6 +192,7 @@ SM.ScarletCrusadeData = {
         },
         {
             chapter = "The Scarlet Path",
+            follows = false,
             faction = "Alliance",
             summary = "Brother Crowley, in Stormwind's Cathedral Square, wants you to call on Brother Anton. Anton is at Nijel's Point in Desolace, which is a long way to go for a conversation. Crowley doesn't say what it's about. Anton will.",
             recap = "Brother Crowley in the Stormwind Cathedral wanted me to go and see a Brother Anton. In Desolace. You don't just wander over to Desolace, but I went, and at Nijel's Point Anton had a job ready and waiting.\n\nThirty undead ravagers. Not twenty, not a handful. Thirty. I counted, because I knew Anton would.\n\nThat earned me a letter of commendation to Raleigh the Devout in Southshore. That's how it goes with the devout. You do them one favor, they write you a reference, and the reference gets you a bigger favor. Raleigh read it and started talking about a monastery up in Tirisfal Glades, and how badly it needed a visit.",
@@ -213,6 +215,7 @@ SM.ScarletCrusadeData = {
         },
         {
             chapter = "Hearthglen Reconnaissance",
+            follows = false,
             summary = "Kirsta Deepshadow, in the north of the Western Plaguelands, has unfinished business with the Scarlet Crusade and could use a hand with it. Their outer lines are close by. Behind them sits Hearthglen.",
             recap = "Kirsta Deepshadow keeps to the north end of the Western Plaguelands and has a professional interest in the Scarlet Crusade. Unfinished business, Kirsta calls it, which is the kind of phrase that means somebody owes somebody blood. The first few jobs were a sampler of their outer lines, two of everything, like ordering off a menu.\n\nThe one worth telling is Hearthglen. Kirsta wanted the town itself measured, so I walked into a fortress full of Crusaders and went looking for somewhere high to stand and have a good long look. You'd think somebody would wonder what a stranger was doing up there. Nobody did.\n\nI came back with a count of everything they had. It wasn't a garrison. It was an army.",
             quests = {
@@ -223,6 +226,7 @@ SM.ScarletCrusadeData = {
         },
         {
             chapter = "Stratholme's Scarlet Secret",
+            follows = false,
             summary = "Duke Nicholas Zverenhoff of the Argent Dawn, at Light's Hope Chapel, wants a fire started. The Scarlet Crusade keeps an archive in Stratholme, and the duke wants it burned, along with the archivist who keeps it.",
             recap = "Duke Nicholas Zverenhoff of the Argent Dawn wanted the Scarlet Archive in Stratholme burned and its archivist dead. Fine. Archives burn nicely.\n\nThe part worth telling came after. The Scarlet Bastion answers to the Grand Crusader, holiest man in the city. We hit him hard enough and he came apart into Balnazzar, a dreadlord, who'd been wearing the Grand Crusader the whole time like a borrowed tabard. Explains a few things about the Crusade, that. I brought the duke the head.\n\nThe duke would take Baron Rivendare's head too, from the dead side of town, if anyone was offering. Some folk collect spoons.",
             quests = {
@@ -241,6 +245,7 @@ SM.ScarletCrusadeData = {
         },
         {
             chapter = "Tyr's Hand",
+            follows = false,
             faction = "Horde",
             summary = "Nathanos Blightcaller keeps to Marris Stead in the Eastern Plaguelands and doesn't do small talk. He has orders for you, and they start with a trip home: Varimathras, in the Undercity, is expecting you.",
             recap = "Nathanos Blightcaller doesn't do small talk. I'd taken the Grand Crusader's orders off a dead Scarlet courier, and Nathanos had a better idea than reading them.\n\nHe handed me a rotten apple. One bite and I looked every inch a Scarlet Crusader, and off I went to Tyr's Hand to deliver those orders to the Crusader Lord in person. A whole town of zealots, and me strolling through it with the taste of bad fruit in my mouth. Nobody looked twice. The Crusader Lord took the orders and gave me plenty to carry back.\n\nWhat I brought Nathanos put the Scarlet Oracle, Demetria, on the road to Stratholme with an escort. She never got there.",
@@ -254,6 +259,7 @@ SM.ScarletCrusadeData = {
         },
         {
             chapter = "The Fordring Name",
+            follows = false,
             summaryAlliance = "At the western edge of the Eastern Plaguelands, an old man named Tirion Fordring lives alone in a cottage, a long way from anybody. He has a story to tell and a favor to ask. Sit down for the story.",
             summaryHorde = "High Executor Derrington, at the Bulwark, wants the Scarlet Crusade busy fighting somebody other than the Forsaken, starting with their camp near Felstone Field. Over in the Eastern Plaguelands, Tirion Fordring lives alone in a cottage and has a favor to ask.",
             recap = "Tirion Fordring lives alone in a cottage in the Eastern Plaguelands, and once he starts talking, you sit down. He lost his title and his home for standing up for the wrong orc, and his son Taelan grew up to be a Highlord of the Scarlet Crusade. Tirion wanted him back.\n\nSo I went collecting memories, the best of them a family painting hidden in Stratholme behind a picture of the twin moons. A hag at Uther's Tomb gave me a Scarlet face, and I walked into Hearthglen and handed Taelan his father's gift.\n\nIt worked. Taelan remembered, and we fought our way out together. On the road, Grand Inquisitor Isillien caught us. Taelan died there. Tirion arrived a moment too late, and Isillien didn't last long after.",

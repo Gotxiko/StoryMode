@@ -65,6 +65,7 @@ SM.ClassicDruidQuestData = {
         },
         {
             chapter = "Cure Poison",
+            follows = false,
             requiredLevel = 14,
             summary = "Your trainer sends you to Moonglade, where Dendrite Starblaze has a new lesson waiting. This one is about healing, and the Circle doesn't teach healing from a book. Bring patience, and good boots.",
             recapAlliance = "The Circle never hands you a spell. It hands you a problem and sits back to see what you'll do with it.\n\nThis time it was the deer of Darkshore, sickening up and down the coast. I went up to Cliffspring Falls to find where it began, and Alanndarian Nightsong in Auberdine turned what I brought back into a salve.\n\nThen I spent a slow, pleasant afternoon walking Darkshore from the river nearly to Ashenvale, finding sick deer and putting salve on them. Ten in all. Not one of them said thank you. Each got up, gave me a look as though I'd been rude, and wandered off into the trees.\n\nHealthy, though. Gratitude is a people habit. Deer just get on with things, and the older I get, the more I think they have the right idea.",
@@ -84,6 +85,7 @@ SM.ClassicDruidQuestData = {
         },
         {
             chapter = "Aquatic Form",
+            follows = false,
             requiredLevel = 16,
             summary = "Your trainer has another lesson for you, and Dendrite Starblaze in Moonglade will give it. This one is about water, so you will get wet. Druids teach the way water moves: slowly, and never in a straight line.",
             recap = "Moonglade is the one place in the world where nobody rushes you, so naturally it's where they teach you to swim.\n\nThe first trial meant hunting the bottom of Lake Elune'ara for a shrine bauble and carrying it up to the Shrine of Remulos. Tajarri was waiting there to tell me I'd passed. I was too waterlogged to argue.\n\nThe second was the Pendant of the Sea Lion, which comes in two halves, and nobody would simply tell me where they were. You ask the folk of Moonglade, and they give you a hint and a kind smile and go back to whatever they were doing. Druids. I'm allowed to say that.\n\nI found both halves and brought the pendant to Dendrite Starblaze, and I've had the sea lion's shape ever since. Finest way to travel I know. No boats, no docks, and nobody asks you for a fare.",

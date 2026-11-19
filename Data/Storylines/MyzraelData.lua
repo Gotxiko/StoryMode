@@ -83,6 +83,7 @@ SM.MyzraelData = {
         },
         {
             chapter = "Theldurin the Lost",
+            follows = false,
             summaryAlliance = "Gerrig Bonegrip, in the Forlorn Cavern of Ironforge, knows how Myzrael can be summoned. It takes a scroll, and the scroll went missing along with someone called Theldurin the Lost, last heard of in the Badlands. The name is not encouraging.",
             summaryHorde = "Zaruk, in Hammerfall, knows how Myzrael can be summoned. It takes a scroll, and the scroll went missing along with someone called Theldurin the Lost, last heard of in the Badlands. The name is not encouraging.",
             recapAlliance = "Gerrig had more to say after that. The higher cause had a name, the Twilight's Hammer, and the Lady was their Lady. To bring her back they needed the Scroll of Myzrael, and one of their own, Theldurin, had lost his mind, scorned their teachings and fled to the Badlands with it.\n\nTheldurin was mad, all right. He said hello seven times, apologized, and took the apology back. But when I mentioned the scroll, he made perfect sense. Summon her? You don't want that, he said. If she comes up, we're all in trouble. Maybe she's already free, gathering her strength.\n\nI had just finished setting her free.\n\nThe scroll had been torn up by enraged rock elementals, who were still fighting over the scraps. I collected the scraps. Theldurin called them our only chance against the evil of Myzrael, and went looking for his scrap-ratchet.",

@@ -142,6 +142,7 @@ SM.DungeonSetTwoData = {
         },
         {
             chapter = "Mux's Supernatural Device",
+            follows = false,
             summary = "Mux Manascrambler, a goblin in Gadgetzan, has a supernatural device in mind. Like every goblin plan, it starts with your money: forty gold, and a pile of reagents to go with it.",
             recap = "Mux Manascrambler is a goblin with a plan, and a goblin's plan always starts with your money. Forty gold and a cartload of reagents bought me the Ectoplasmic Distiller, and then I had to go out and use it on ghosts in three different corners of the world. Ghosts do not enjoy being distilled.\n\nThe best part was the shifty merchant: an imp in a cave in Winterspring, selling Fel Elemental Rods. Doing business with an imp is exactly as much fun as it sounds. I counted my fingers afterward.\n\nOut of all of it came the Extra-Dimensional Ghost Revealer. I carried it home, and my belt and gloves got the same treatment the bracers had. Just compensation, they called it. I'd call it a start.",
             quests = {
@@ -173,6 +174,7 @@ SM.DungeonSetTwoData = {
         },
         {
             chapter = "Anthion and the Dead Man's Plea",
+            follows = false,
             summaryAlliance = "Deliana in Ironforge wants Mux's new Ghost Revealer put to work. Take it to the gates of Stratholme, switch it on, and see whether the ghost of Anthion Harmon has anything to say.",
             summaryHorde = "Mokvar in Orgrimmar wants Mux's new Ghost Revealer put to work. Take it to the gates of Stratholme, switch it on, and see whether the ghost of Anthion Harmon has anything to say.",
             recap = "The Ghost Revealer, it turns out, works. I switched it on at the gates of Stratholme, and there stood Anthion Harmon, dead and waiting, with a plea. Baron Rivendare had Ysida Harmon somewhere inside, and time was short.\n\nSo we ran Stratholme. Not walked. Ran, through the whole rotten city to the Baron himself, and we got there in time. Ysida gave me a locket to carry out, so Anthion would know it was true.\n\nThe dead don't stay sentimental for long when there's work left. Next thing I knew, Anthion had me fetching iron, leather and cloth for a banner, and the unfinished banner was going to an old friend of his in Dire Maul. These jobs never get shorter.",
@@ -247,6 +249,7 @@ SM.DungeonSetTwoData = {
         },
         {
             chapter = "Bodley's Unfortunate Fate",
+            follows = false,
             summaryAlliance = "Deliana in Ironforge has one more name for you: Bodley. Look near Blackrock Spire, in Blackrock Mountain, with the Ghost Revealer switched on. Without it, you won't see Bodley at all.",
             summaryHorde = "Mokvar in Orgrimmar has one more name for you: Bodley. Look near Blackrock Spire, in Blackrock Mountain, with the Ghost Revealer switched on. Without it, you won't see Bodley at all.",
             recap = "Back home they pointed me at Blackrock Mountain, Ghost Revealer in hand. Somewhere near the Spire, they said, I'd find somebody. I switched it on, and there was Bodley. Dead, like most of my acquaintances that season, and with a great deal to say about Lord Valthalak.\n\nWhat it came down to was fire. Three kings of flame, Bodley called them. I fetched a piece of each, and a hallowed brazier to hold them, and brought the lot back to a ghost inside a mountain.\n\nWhat came out of that was a brazier for calling up the dead. Bodley seemed to think that was good news. Bodley's standards have changed.",
@@ -271,6 +274,7 @@ SM.DungeonSetTwoData = {
         },
         {
             chapter = "Final Preparations",
+            follows = false,
             summary = "Lord Valthalak's amulet is whole again, and Bodley isn't finished with it. First come the final preparations: forty Blackrock bracers and a Flask of Supreme Power, carried back to Blackrock Mountain.",
             recap = "With the amulet whole again, Bodley wanted it used. A Flask of Supreme Power and a sack of Blackrock bracers later, I was in Upper Blackrock Spire, in the Beast's old room, lighting the brazier one last time.\n\nLord Valthalak answered. Lord Valthalak was not happy to be called. We put him down, and then came the strangest part of the whole business: I held his own amulet over his corpse, then handed it to his ghost, who sent me back to Bodley.\n\nBodley called this part Mea Culpa. I took it for an apology. Bodley's, not mine.",
             quests = {

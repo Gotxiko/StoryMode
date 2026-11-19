@@ -95,6 +95,7 @@ SM.ShiftingSandsData = {
         },
         {
             chapter = "Green Scepter Shard",
+            follows = false,
             summary = "Malfurion and Remulos guide the path to Eranikus. The Nightmare's corruption must be confronted in Moonglade.",
             recap = "The green shard was not won by simple killing. Eranikus had fallen into nightmare, and Remulos needed the corruption named before it could be answered. The defense of Moonglade became a rite before all who came to stand there: shades pouring from the Dream, Remulos holding the line, and Tyrande's grace turning a dragon's rage toward redemption.",
             quests = {
@@ -107,6 +108,7 @@ SM.ShiftingSandsData = {
         },
         {
             chapter = "Red Scepter Shard",
+            follows = false,
             summary = "Vaelastrasz gives little time for ceremony. The red shard must be claimed before the chance is lost.",
             recap = "The red shard was the bluntest path and perhaps the cruelest. Vaelastrasz, already broken by Nefarian, could only point toward the master of Blackwing Lair and set a clock running. The shard was taken from Nefarian under pressure, a raid victory folded into the long duty of the scepter.",
             quests = {
@@ -115,6 +117,7 @@ SM.ShiftingSandsData = {
         },
         {
             chapter = "Blue Scepter Shard",
+            follows = false,
             summary = "Azuregos sends you to Narain Soothfancy, whose ledger runs through goggles, chops, ransom notes, Draconic pages, and the sea.",
             recap = "The blue shard hid grave purpose beneath impossible errands. Azuregos sent you to Narain, and Narain's ledger demanded Molten Core goggles, a great chimaerok meal, a stolen book, a ransom drop, pages from dragons, the fires of Onyxia and Ragnaros, and Neptulon's wrath off Azshara's coast. Strange as it was, each step pulled the shard closer to the scepter.",
             quests = {
@@ -137,6 +140,7 @@ SM.ShiftingSandsData = {
         },
         {
             chapter = "Bang a Gong",
+            follows = false,
             summary = "With the three shards restored, take up the Scepter of the Shifting Sands and return to the Scarab Gong.",
             recap = "When the shards were whole, the matter no longer belonged to one champion. The Might of Kalimdor waited on the war effort, the armies at the wall, and all who had prepared for the gates to open. The gong turned a repaired scepter into history: Ahn'Qiraj opened, and the war beyond the Scarab Wall began.",
             quests = {

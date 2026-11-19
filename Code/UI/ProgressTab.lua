@@ -239,13 +239,20 @@ function SM.LayoutProgressTab(data, w, contentW, visibleContentW)
                 else
                     arrow:SetVertexColor(DIM_R, DIM_G, DIM_B, 0.3)
                 end
-                arrow:Show()
+                -- Only into a chapter that leads on from this one.
+                arrow:SetShown(chapters[i + 1].follows ~= false)
             end
         end
         if SM.ForeverWindow then
+            -- An arrow only into a chapter that leads on from the one before
+            -- it (follows = false: it stands on its own).
             for i = 1, #chapters - 1 do
                 local arrow = dTrackArrows[i]
-                SM.ForeverWindow.PlaceChapterArrow(arrow, dTrackNodes[i], dTrackNodes[i + 1], arrow.chapterDone)
+                if chapters[i + 1].follows ~= false then
+                    SM.ForeverWindow.PlaceChapterArrow(arrow, dTrackNodes[i], dTrackNodes[i + 1], arrow.chapterDone)
+                else
+                    arrow:Hide()
+                end
             end
         end
         for i = #chapters + 1, #dTrackNodes do dTrackNodes[i]:Hide() end

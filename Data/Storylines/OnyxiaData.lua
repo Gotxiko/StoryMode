@@ -265,6 +265,7 @@ SM.OnyxiaData = {
         },
         {
             chapter = "Onyxia's Lair",
+            follows = false,
             summaryAlliance = "The Drakefire Amulet opens the way into Onyxia's Lair, in the south of Dustwallow Marsh. Behind it waits the dragon who sat at Stormwind's court for years as Lady Prestor. Highlord Bolvar Fordragon would very much like a word with her, or failing that, her head.",
             summaryHorde = "The Drakefire Amulet opens the way into Onyxia's Lair, in the south of Dustwallow Marsh. Behind it waits the brood mother of the black dragonflight, Deathwing's own daughter. Thrall would like all of Orgrimmar to see how that meeting ends.",
             recapAlliance = "The amulet got us through the door of Onyxia's Lair, down in the south of Dustwallow Marsh, and after that it was up to us. Onyxia had spent years in Stormwind as Lady Prestor, at the king's table, steering the kingdom wherever she liked. In her own home she didn't bother with manners. There were whelps. There were a great many whelps.\n\nWe came out with her head, and I carried it to Highlord Bolvar Fordragon in Stormwind Keep. Bolvar had it hung over the city gates, where everyone passing through could see what had been whispering to their king. The whole city stood a little straighter that day.\n\nMajor Mattingly at the gates had a reward for me afterwards, and a speech to go with it: the journey, he said, had only just begun. I've been walking ever since, so he may have had a point.",

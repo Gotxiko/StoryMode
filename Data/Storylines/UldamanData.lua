@@ -113,6 +113,7 @@ SM.UldamanData = {
         },
         {
             chapter = "The Shattered Necklace",
+            follows = false,
             requiredLevel = 37,
             summaryAlliance = "Somewhere in Uldaman, a shattered necklace is waiting to be found. Broken, but fine work. Track down whoever made it and you might learn what it's worth.",
             summaryHorde = "Dran Droffers, of Droffers and Son Salvage in Orgrimmar, has heard about a valuable necklace somewhere in the Uldaman dig site. Possibly damaged. Droffers doesn't mind damaged, as long as somebody brings it back.",
@@ -141,6 +142,7 @@ SM.UldamanData = {
         },
         {
             chapter = "The Platinum Discs",
+            follows = false,
             requiredLevel = 40,
             summary = "At the very bottom of Uldaman, behind the last of its guardians, a stone watcher keeps the Discs of Norgannon. It has been waiting a very long time for someone to come and ask it questions.",
             recapAlliance = "Past Archaedas, at the very bottom of Uldaman, sits a stone watcher that has been waiting a very long time for someone to ask it a question. I asked. It answered at length. Then I woke the Discs of Norgannon, and they answered at greater length.\n\nThe short of it: the titans shaped the world, and they made the earthen out of stone to look after it. Over the ages the earthen went soft and became something else. You've met the result. They run Ironforge.\n\nI came away with a miniature copy of the discs and took it to the Explorers' League in Ironforge. Proof of where the dwarves came from, small enough to carry under one arm.\n\nMy reward was a voucher for Dinita Stonemantle in the Vault. I found out where a whole people came from and got paid by the bank.",

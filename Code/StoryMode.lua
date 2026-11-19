@@ -799,16 +799,18 @@ function SM.CenterTrackOnSelected(clipW)
         end
     end
     -- Same for between-node arrows
+    -- (A hidden arrow, between chapters that don't lead on, is skipped.)
     for i, arrow in ipairs(dTrackArrows) do
-        if not arrow:IsShown() then break end
-        local arrowX = (i - 1) * TRACK_STEP + TRACK_NODE_SIZE + TRACK_ARROW_GAP / 2 - offset
-        local dist = math.abs(arrowX - center)
-        if dist <= fadeStart then
-            arrow:SetAlpha(1.0)
-        elseif dist >= fadeEnd then
-            arrow:SetAlpha(0.0)
-        else
-            arrow:SetAlpha(1.0 - (dist - fadeStart) / (fadeEnd - fadeStart))
+        if arrow:IsShown() then
+            local arrowX = (i - 1) * TRACK_STEP + TRACK_NODE_SIZE + TRACK_ARROW_GAP / 2 - offset
+            local dist = math.abs(arrowX - center)
+            if dist <= fadeStart then
+                arrow:SetAlpha(1.0)
+            elseif dist >= fadeEnd then
+                arrow:SetAlpha(0.0)
+            else
+                arrow:SetAlpha(1.0 - (dist - fadeStart) / (fadeEnd - fadeStart))
+            end
         end
     end
 end

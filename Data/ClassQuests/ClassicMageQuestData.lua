@@ -55,6 +55,7 @@ SM.ClassicMageQuestData = {
         },
         {
             chapter = "Mage's Wand",
+            follows = false,
             requiredLevel = 30,
             summary = "Your trainer says it's time you met Tabetha. She lives out in Dustwallow Marsh, far from any library, and she's where trainers send a mage once book learning stops being enough.",
             recap = "Tabetha lives out in Dustwallow Marsh, and she's who the trainers send you to when you're ready for a wand. Practical sort. Knows her business.\n\nShe wanted a book called Rituals of Power, which Magus Tirth keeps in a strongbox out on the Shimmering Flats. The box only opens to the right phrase, and nobody was going to just tell me the phrase. I had to go and find it. Frankly, that was the easiest part of the whole affair. Words are what I do.\n\nAfter a little shopping, jade and a bramble with lightning still crackling in it, Tabetha did her ritual. I watched very closely. I walked out with a wand of my own school.\n\nMost people think a wand is a stick that throws sparks. Most people are right. But it's my stick, and the sparks go exactly where I tell them.",
@@ -70,6 +71,7 @@ SM.ClassicMageQuestData = {
         },
         {
             chapter = "Polymorph: Pig",
+            follows = false,
             requiredLevel = 60,
             summary = "Archmage Xylem lives in a tower atop the cliffs of Azshara, about as far from anyone as a tower can get. Xylem wants a Prismatic Shell, and a warlord named Krellian has one. Archmages call this research.",
             recap = "Archmage Xylem keeps a tower on the cliffs of Azshara, and when an archmage that far from anywhere asks for help, it's never boring.\n\nPolymorph does something odd to the Spitelash naga. Turn one into a sheep, and a few seconds later a copy of it falls out of the spell, as though the magic can't decide what it's holding. You kill the copy. Xylem needed fifty.\n\nFifty. I sheeped half the coast. It was the most scientific afternoon of my life.\n\nAnd what do fifty scraps of broken magic teach you? How to turn someone into a pig. Is a pig better than a sheep? It's funnier, and I've come to believe that counts.",
@@ -81,6 +83,7 @@ SM.ClassicMageQuestData = {
         },
         {
             chapter = "Arcane Refreshment",
+            follows = false,
             requiredLevel = 60,
             summary = "Deep in Dire Maul, Lorekeeper Lydros still keeps the Athenaeum, and still knows a spell or two worth learning. The price is the essence of Hydrospawn, a water elemental loose in the Warpwood Quarter. Lydros calls that a fair trade.",
             recap = "Dire Maul has a library, the Athenaeum, and in it sits Lorekeeper Lydros, who looks after a great many books and a few very good spells. I liked Lydros at once. Anyone who stays in a ruin for the reading has their priorities in order.\n\nThe spell's price was the essence of Hydrospawn, a water elemental loose in the Warpwood Quarter. Hydrospawn didn't care to be anybody's price. It was a damp afternoon. I brought the essence back.\n\nWhat I got for it isn't flashy. No fire, no frost, nothing anyone will write a song about. But a fight is a short thing between two long rests. Anyone can throw a fireball. Not everyone can bring refreshments, and at the end of a long day underground, you'd be amazed which one people remember.",

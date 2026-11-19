@@ -136,6 +136,7 @@ SM.DefiasBrotherhoodData = {
         },
         {
             chapter = "A Favor in Lakeshire",
+            follows = false,
             summary = "Westfall's farmers have been driven off their land, and Gryan Stoutmantle means to win it back. He's raising a People's Militia in the stone tower on Sentinel Hill, and he'll take every recruit who turns up.",
             recap = "Gryan Stoutmantle counts in fifteens. Fifteen trappers, fifteen smugglers, fifteen pillagers, fifteen looters, fifteen highwaymen, and a few extra so I wouldn't get bored. For a while there, the People's Militia was mostly me.\n\nBest errand of the lot was a note. Gryan sent me to Lakeshire to see someone called Wiley the Black, and Wiley gave me a note. I carried it back to Westfall. Gryan had me carry it on to Mathias Shaw in Stormwind. Shaw had me carry his report back to Westfall. Three zones and four trips for some paper, and nobody once thought to hire a courier. I was the courier.\n\nStill, Shaw's report gave Gryan a name to put to all those masks. That changes a fight.",
             quests = {
@@ -167,6 +168,7 @@ SM.DefiasBrotherhoodData = {
         },
         {
             chapter = "The Messenger and the Traitor",
+            follows = false,
             summary = "Gryan Stoutmantle knows a good deal more about the Defias now, but not where they hide. One of his scouts has spotted a Defias messenger on the roads around Moonbrook, and messengers carry things.",
             recap = "A name's a fine thing, but Gryan wanted an address. So I watched the roads south of Moonbrook until a Defias messenger came strolling along with a letter, and we settled the question of who'd be delivering it. Me. To Gryan.\n\nWhat really helped was the Defias Traitor, who turned up at Sentinel Hill ready to show us where the rest of them were hiding. All it took was walking a turncoat down to Moonbrook alive, and the road to Moonbrook is not a friendly road. I kept the Traitor breathing right up to the hole in the ground they'd been using for a front door.\n\nThe old mine. Of course it was the mine.",
             quests = {
@@ -190,6 +192,7 @@ SM.DefiasBrotherhoodData = {
         },
         {
             chapter = "The Unsent Letter",
+            follows = false,
             summary = "Edwin VanCleef was carrying a letter, sealed and never sent. It's addressed to Baros Alexston, the City Architect, at City Hall in Stormwind's Cathedral Square. Somebody ought to deliver it.",
             recap = "VanCleef's letter was for Baros Alexston, the City Architect. Baros had known the Stonemasons back when they were still just masons, and I got the feeling that letter landed somewhere sore. Next thing I knew, I was on my way to the Stockade.\n\nOne of the Brotherhood's leaders, Bazil Thredd, was locked up in there, and the prisoners had picked that moment to riot. The warden wanted it put down and Thredd's head brought out. So in I went: a whole building full of people with nothing to lose and a grudge against anyone holding a key. Thredd was waiting deep in the back. I came out with the head.\n\nThe warden thanked me, and then mentioned, as if it were nothing, that Thredd had had a visitor.",
             quests = {

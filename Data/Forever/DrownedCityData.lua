@@ -100,6 +100,7 @@ SM.ForeverDrownedCityData = {
         },
         {
             chapter = "Colonel Kurzen",
+            follows = false,
             faction = "Alliance",
             summary = "Brother Nimetz at the Rebel Camp has a question nobody else is asking: what turned a once-noble man into the colonel they're fighting? Sergeant Yohwa and Lieutenant Doren, meanwhile, are ready to go after Kurzen's best troops, and the colonel himself.",
             recap = "The sergeant sent me after Kurzen's special forces, down in the caves they call the Stockpile, and then the lieutenant sent me after the colonel himself. Kurzen commanded from the very back of it. I came out with his head, which settled the military side of things.\n\nBrother Nimetz was stuck on another side. Kurzen had once been a good man, and Nimetz wanted to know what turned him. So I copied four troll legends off tablets in the old ruins, and pried a handful of fetishes off the Skullsplitter witchdoctors down south.\n\nNimetz added a scout's report: the local trolls were all worked up, repeating one word. I'lalai. He bundled the lot and sent me to a friend of his in Southshore. Stranglethorn to Hillsbrad, with a parcel. Nobody in that camp does anything by halves.",

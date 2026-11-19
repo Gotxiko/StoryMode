@@ -80,6 +80,7 @@ SM.MaraudonData = {
         },
         {
             chapter = "Vyle Corruption",
+            follows = false,
             requiredLevel = 41,
             summaryAlliance = "Something is corrupting the plants of Maraudon. Talendria at Nijel's Point has a remedy to try, a coated vial to fill at the caverns' orange crystal pool. Archmage Tervosh in Theramore wants shadowshards from the purple side, too.",
             summaryHorde = "Something is corrupting the plants of Maraudon. Vark Battlescar at Shadowprey Village has a remedy to try, a coated vial to fill at the caverns' orange crystal pool. Uthel'nay in Orgrimmar wants shadowshards from the purple side, too.",
@@ -94,6 +95,7 @@ SM.MaraudonData = {
         },
         {
             chapter = "The Scepter of Celebras",
+            follows = false,
             requiredLevel = 41,
             summary = "Just inside Maraudon's orange passage, Cavindra tells a legend of the caves: Celebras, and his scepter, now in two pieces. Find the rod and the diamond, then find a way to speak with Celebras himself.",
             recap = "Cavindra had a story about Maraudon, and the story was about Celebras, a keeper the caverns had twisted. Fixing him meant the Scepter of Celebras, which had come apart into a rod and a diamond, and two of the nastiest things in Maraudon were holding a piece each. Neither was in a sharing mood, so I didn't ask nicely.\n\nThen there was Celebras himself, cursed and wild, who had to be beaten before he could be talked to. Not a sentence I expected to say about a keeper.\n\nAfterward he was Celebras the Redeemed, calm and himself again, and I helped him put the scepter back together. Handy thing. Opens a shortcut into the deeper caves.\n\nI've had worse rewards than a door I don't have to fight my way through.",
@@ -104,6 +106,7 @@ SM.MaraudonData = {
         },
         {
             chapter = "Corruption of Earth and Seed",
+            follows = false,
             requiredLevel = 45,
             summaryAlliance = "Keeper Marandis at Nijel's Point wants Princess Theradras dead. The princess waits at the very bottom of Maraudon, and everything between here and there would rather you stayed home.",
             summaryHorde = "Selendra, camped near Shadowprey Village, wants Princess Theradras dead. The princess waits at the very bottom of Maraudon, and everything between here and there would rather you stayed home.",

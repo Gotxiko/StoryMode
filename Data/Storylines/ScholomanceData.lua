@@ -104,6 +104,7 @@ SM.ScholomanceData = {
         },
         {
             chapter = "The Sarkhoffs",
+            follows = false,
             requiredLevel = 55,
             summary = "Caer Darrow is full of ghosts, and Eva Sarkhoff is one of the saddest. She has unfinished business with Doctor Theolen Krastinov, the Butcher, who is still at work somewhere inside Scholomance.",
             recap = "Caer Darrow is a town of ghosts, and one of the sadder ones is Eva Sarkhoff. Doctor Theolen Krastinov, the Butcher, had killed her family, and he was still at work in Scholomance.\n\nEva wanted him dead. Then she wanted her own remains burned, and her family's beside them. That's a strange thing to be asked by the person whose bones you'll be burning. I did it. It seemed to matter to her.\n\nHer last request came with a vial, the Blood of Innocents, and instructions: find the porch, put the blood in the brazier, and Kirtonos the Herald would come to feast upon my soul.\n\nKirtonos came. My soul is still with me. Kirtonos isn't.",
@@ -115,6 +116,7 @@ SM.ScholomanceData = {
         },
         {
             chapter = "Barov Family Fortune",
+            follows = false,
             requiredLevel = 52,
             summaryAlliance = "Weldon Barov at Chillwind Camp wants the family fortune back. It's somewhere in Scholomance, as four deeds: Caer Darrow, Brill, Tarren Mill and Southshore. Somebody has to go in after them. Weldon has someone in mind.",
             summaryHorde = "Alexi Barov, near the Bulwark, has a business proposal. The Barov fortune is lying in Scholomance as four deeds: Caer Darrow, Brill, Tarren Mill and Southshore. Alexi wants them home, and would rather not fetch them personally.",
@@ -129,6 +131,7 @@ SM.ScholomanceData = {
         },
         {
             chapter = "Ras Frostwhisper",
+            follows = false,
             requiredLevel = 57,
             summary = "Magistrate Marduke, another of Caer Darrow's ghosts, wants the lich Ras Frostwhisper destroyed, and has some advice: before you fight a lich, find out who it used to be. That trail starts in the ruins of Stromgarde.",
             recap = "Ras Frostwhisper haunts Scholomance, and Ras is a lich. Magistrate Marduke, another of Caer Darrow's ghosts, had a theory about liches. You don't kill one. You remind it that it used to be a man, and then you kill the man.\n\nSo I went looking for the man. In the ruins of Stromgarde I found his Keepsake of Remembrance. Leonid Barthalomew at Light's Hope knew what to do with it, and what to do was carry it into Stratholme and set it on the unholy ground called Menethil's Gift. I won't describe that place. You've either been or you're lucky.\n\nBack in Scholomance, I held the Soulbound Keepsake up to the lich, and for one moment Ras Frostwhisper was a mortal again.\n\nIt was a short moment. Marduke got the head.",

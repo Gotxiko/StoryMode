@@ -120,6 +120,7 @@ SM.DuskwoodData = {
         },
         {
             chapter = "Raven Hill",
+            follows = false,
             summary = "Sven Yorgen lost his family to the Dark Riders of Deadwind Pass. Coming home, he saw a shadowy figure burying something behind the stump by his barn, and never found out what. Sven is camped at the far western edge of Duskwood.",
             recap = "Sven Yorgen's family was murdered, and what Sven wanted was a name. Somebody had buried a book behind an old stump on his farm, and I spent a good while showing it around Darkshire. The clues, once I had them all: not from around here, nervous, jittery, gone west. I found him out past town. Folks call him Jitters. Some people just make it easy.\n\nOnce Jitters had finished that journal, we had our name. Morbent Fel, a necromancer out at Raven Hill. Getting at Morbent took a special weapon, and the weapon took a tour of its own: a bishop in Stormwind, a shipwreck in the Wetlands, a forge back in Stormwind. Morbent's Bane, they called it.\n\nMorbent took one look at it and stopped being difficult.",
             quests = {
@@ -157,6 +158,7 @@ SM.DuskwoodData = {
         },
         {
             chapter = "The Embalmer",
+            follows = false,
             summary = "An old man who lives in a shack above Raven Hill Cemetery used to come into Darkshire for supplies. Elaine Carevin hasn't seen him in a long while and thinks somebody should make sure nothing's wrong.",
             recap = "Up past the Raven Hill cemetery, in a shack, lives an old hermit called Abercrombie. Lonely sort, you'd think. Wanted a few things from town, and I was glad to help.\n\nHere's what he wanted. Thread spun from ghost hair. Zombie juice. A pile of ghoul ribs. Looking back, the ghoul ribs were a hint.\n\nThen he gave me a letter for the mayor, and the mayor couldn't read it. It had to be translated, and not long after the mayor read it properly, something called Stitches came lurching down the road toward Darkshire. Abercrombie had been building company.\n\nThere was a bride, too. Eliza, out in the cemetery. Eliza had the Embalmer's heart, so I took it off her and brought it to the mayor. Courting in Duskwood is a grim business.",
             quests = {
@@ -179,6 +181,7 @@ SM.DuskwoodData = {
         },
         {
             chapter = "The Legend of Stalvan",
+            follows = false,
             summary = "Madame Eva read the cards in Darkshire last night, and Death stared back. Eva fears for her granddaughter, and the trance gave up only one clue: a name, Stalvan. Clerk Daltry at the Town Hall might know it.",
             recap = "Madame Eva had a vision, and the vision had a name in it. Stalvan. That one word cost me a walk across half the kingdom.\n\nStalvan himself was hard to find. His paperwork was everywhere. A town registry, a footlocker in a Westfall schoolhouse, a letter that never got delivered, a crate of somebody's old things down in the Stormwind canals, a chest upstairs in a marshal's house in Elwynn. Every one of them held a page, and every page was worse than the last. A faded one. A muddy one. A bloody one.\n\nIt ended at Mistmantle Manor with Stalvan Mistmantle, who didn't want visitors. I brought his family ring back to Madame Eva. Eva didn't look surprised. I doubt anything surprises her.",
             quests = {
@@ -199,6 +202,7 @@ SM.DuskwoodData = {
         },
         {
             chapter = "Worgen in the Woods",
+            follows = false,
             summary = "Calor, in Darkshire, gave up on the Night Watch and joined Master Carevin, who goes after Duskwood's evil instead of waiting for it. If you want in, Calor says, prove it on the worgen in Brightwood Grove.",
             recap = "Duskwood has worgen. Of course it does. The Nightbane prowl Brightwood Grove and the Rotting Orchard, and someone in Darkshire called Calor keeps count of them.\n\nCalor started me on the shadow weavers, which are worgen who cast spells, which is a thing I'd been happier not knowing about. After that it was runners and fangs and whatever else the pack could spare, and every trip out, the woods got a little quieter and I got a little choosier about where I put my back.\n\nWhen it was done, Calor wrote me a note for Master Carevin. I'd been on trial the whole time without being told. Seems I passed. The reward for passing was being trusted with more worgen.",
             quests = {
@@ -210,6 +214,7 @@ SM.DuskwoodData = {
         },
         {
             chapter = "Morgan Ladimore",
+            follows = false,
             summary = "On the hill north of Raven Hill Cemetery stands a weathered grave marked Morgan Ladimore, and someone has disturbed the dirt on it. Sirra Von'Indi in Darkshire might remember the name.",
             recap = "North of Raven Hill there's a grave so weathered you can hardly read it. I asked around Darkshire whose it was, and the librarian knew. Morgan Ladimore. It's a sad story, and I'll leave the telling of it to the people who live there. The short of it: something called Mor'Ladim walks the woods near that grave, and the commander of the Night Watch wanted him gone for good.\n\nI brought back his skull. Then the commander told me the rest. One of Ladimore's children had lived, and she was right there in Darkshire, standing watch. Sarah Ladimore.\n\nSarah heard me out, then gave me a ring and asked me to leave it on her father's grave. So I walked back up the hill and did.\n\nSome errands you don't make jokes about. That's one.",
             quests = {

@@ -168,6 +168,7 @@ SM.ClassicShamanQuestData = {
         },
         {
             chapter = "Elemental Mastery",
+            follows = false,
             requiredLevel = 50,
             faction = "Horde",
             summary = "Kardris Dreamseeker in Orgrimmar thinks you're ready for the hardest lesson yet: all four elements at once. That lesson belongs to Bath'rah the Windwatcher in the Alterac Mountains, who will want a sample of each.",

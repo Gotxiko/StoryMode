@@ -86,6 +86,7 @@ SM.ANewPlagueData = {
         },
         {
             chapter = "A Recipe for Death",
+            follows = false,
             summary = "Johaan's findings are with Apothecary Renferrel now, at the Sepulcher in Silverpine Forest. Renferrel has a shopping list of bear hearts and spider blood, all bound for Master Apothecary Faranell in the Undercity. Don't ask what for.",
             recap = "Silverpine is where Johaan's work goes to grow up. Renferrel at the Sepulcher wanted bear hearts and spider blood, which by then felt like ordinary shopping, and I hauled the lot down to Master Apothecary Faranell in the Undercity. He looked at it the way most people look at cake.\n\nTurns out somebody had tried this recipe before. A fellow called Berard, whose journal was still lying around in Pyrewood Village. Lovely place. Do not stay the night. I got the journal out, and then Faranell wanted moss off the things in Lake Lordamere and a hardened tumor, and I stopped asking what any of it was for.\n\nThat's the trick with apothecaries. The less you ask, the better you sleep.",
             quests = {
@@ -114,6 +115,7 @@ SM.ANewPlagueData = {
         },
         {
             chapter = "Tarren Mill Trials",
+            follows = false,
             summary = "Apothecary Lydon, in Tarren Mill, wants gray bear tongues and creeper ichor for a new elixir. Lydon likes to see his work tested, on somebody other than Lydon. That's where you come in.",
             recap = "Apothecary Lydon runs things in Tarren Mill, and Lydon likes to test his work on whoever's handy. I brought him bear tongues and creeper ichor, he cooked up the Elixir of Suffering, and then he handed it back to me. Not to drink. For Umpi, the poor beast he keeps in his room. Umpi did not enjoy it.\n\nNext came mountain lion blood for the Elixir of Pain, and that one was for Stanley. Stanley lived on a farm down in Hillsbrad Fields and was, until I came along, a very good dog. One sip and he was something else entirely, and we had words, and I won.\n\nLydon was delighted. Lydon is always delighted.",
             quests = {
@@ -125,6 +127,7 @@ SM.ANewPlagueData = {
         },
         {
             chapter = "Plagued Brew",
+            follows = false,
             summary = "Apothecary Lydon, in Tarren Mill, has his eye on a greater work: the Elixir of Agony. It starts with mudsnout blossoms. It does not end there. Lydon's recipes never do.",
             recap = "The Elixir of Agony was Lydon's masterpiece, and it took half of Hillsbrad to make. Mudsnout blossoms. A trip down to Faranell so he could add his own little touch. Troll's blood, scales off the naga on the coast, eyes off the murlocs. And then the secret ingredient: beer. A keg of Shindigger Stout from Dun Garok.\n\nLydon had some farmers locked upstairs at the inn, and the farmers, he figured, would drink anything. He tainted the keg and I carried it up and set it on their rug, friendly as you like.\n\nThen I went downstairs and had a drink of my own. Not from that keg.",
             quests = {
