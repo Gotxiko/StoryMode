@@ -196,6 +196,26 @@ function SM.CreateInsetCardShade(parent, alpha, subLevel)
     return shade
 end
 
+-- The tracking crosshair, for "in the next-step tracker": its atlas where
+-- the client has it, else the cursor texture it comes from.
+function SM.SetTrackedIconTexture(tex)
+    if SM.SafeSetAtlas(tex, "crosshair_track_48", false) then return end
+    tex:SetTexture("Interface\\Cursor\\UITrackCrosshair2x")
+end
+
+-- The finished flag with the crosshair in place of the check: the story the
+-- next-step tracker follows.
+function SM.CreateTrackedRibbon(parent)
+    local ribbon = SM.CreateCompletionRibbon(parent)
+    local _, check = ribbon:GetRegions()
+    if check then
+        check:SetVertexColor(1, 1, 1)
+        SM.SetTrackedIconTexture(check)
+        check:SetSize(18, 18)
+    end
+    return ribbon
+end
+
 function SM.CreateCompletionRibbon(parent)
     local ribbon = CreateFrame("Frame", nil, parent)
     ribbon:SetSize(34, 42)

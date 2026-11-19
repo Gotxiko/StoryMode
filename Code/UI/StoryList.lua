@@ -512,6 +512,10 @@ local function RefreshStoryRow(row)
         if row.checkmark then
             row.checkmark:SetShown(state and state.isFinished)
         end
+        if row.trackedBadge then
+            local finished = state and state.isFinished
+            row.trackedBadge:SetShown(not finished and SM.IsStoryTracked and SM.IsStoryTracked(row.data) or false)
+        end
         if row.coverTex and SM.IsClassicClient() then
             row.coverTex:SetShown(SM.SetAdventureCoverTexture(row.coverTex, row.data))
         end
@@ -840,7 +844,15 @@ local function CreateStoryListCard(data, idx, cardHeight, cardPadding, yOffset, 
         cardCheckmark:Hide()
     end
 
+    -- The finished flag with the crosshair, where the finished flag hangs, while
+    -- the story is the one the next-step tracker follows (and not finished).
+    local trackedBadge = SM.CreateTrackedRibbon(card)
+    trackedBadge:SetScale(cardCheckmark:GetScale())
+    trackedBadge:SetPoint("CENTER", cardCheckmark, "CENTER", 0, 0)
+    trackedBadge:SetShown(not cardCheckmark:IsShown() and SM.IsStoryTracked and SM.IsStoryTracked(data) or false)
+
     local row = {
+        trackedBadge = trackedBadge,
         btn       = card,
         bg        = bg,
         coverTex  = coverTex,
@@ -856,8 +868,19 @@ local function CreateStoryListCard(data, idx, cardHeight, cardPadding, yOffset, 
     storyLeftRows[idx] = row
     cardPool[section][data] = row
 
-    card:SetScript("OnClick", function(_, button)
-        if button == "LeftButton" and IsShiftKeyDown() and SM.InsertStoryChatLink(data) then
+    card:SetScript("OnClick", function(self, button)
+        -- Shift-left-click, as in the quest log: while typing in chat it
+        -- links the story; otherwise it follows the story in the next-step
+        -- tracker, in place of the one followed, or stops following it.
+        if button == "LeftButton" and IsShiftKeyDown() then
+            local typing = ChatEdit_GetActiveWindow and ChatEdit_GetActiveWindow()
+            if typing and SM.InsertStoryChatLink(data) then return end
+            if not self.lockReason and SM.ToggleTrackedStory then
+                SM.ToggleTrackedStory(data)
+                if SM.RefreshTrackNodeBadges then SM.RefreshTrackNodeBadges() end
+                local onEnter = self:GetScript("OnEnter")
+                if onEnter and self:IsMouseOver() then onEnter(self) end
+            end
             return
         end
         -- Found by one of its quests: open that quest's chapter on the
@@ -872,11 +895,17 @@ local function CreateStoryListCard(data, idx, cardHeight, cardPadding, yOffset, 
     end)
     card:SetScript("OnEnter", function(self)
         SM.ApplyStoryCardBorderState(row, true)
-        if not self.lockReason then return end
         SMTooltip:SetOwner(self, "ANCHOR_RIGHT")
         SMTooltip:ClearLines()
-        SMTooltip:AddLine(L["Tooltip Story Locked"], 1, 1, 1)
-        SMTooltip:AddLine(self.lockReason, 1.0, 0.82, 0.35, true)
+        if self.lockReason then
+            SMTooltip:AddLine(L["Tooltip Story Locked"], 1, 1, 1)
+            SMTooltip:AddLine(self.lockReason, 1.0, 0.82, 0.35, true)
+        else
+            -- What shift-right-click does here, in gold.
+            local tracked = SM.IsStoryTracked and SM.IsStoryTracked(data)
+            SMTooltip:AddLine(data.title, 1, 1, 1)
+            SMTooltip:AddLine(tracked and L["Story Card Untrack"] or L["Story Card Track"], 1.0, 0.82, 0)
+        end
         SMTooltip:Show()
     end)
     card:SetScript("OnLeave", function()

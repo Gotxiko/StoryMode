@@ -353,6 +353,8 @@ local function CreateBlock()
         if SM.SetFollowedStoryID then SM.SetFollowedStoryID(nil) end
         print(L["Addon Prefix"] .. L["Tracker Unfollowed"])
         Refresh()
+        if SM.RefreshStoryListState then SM.RefreshStoryListState() end
+        if SM.RefreshTrackNodeBadges then SM.RefreshTrackNodeBadges() end
     end)
     plate.close:SetScript("OnEnter", function(self) ShowTooltip(self, "Tracker Tooltip Close") end)
     plate.close:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -923,9 +925,33 @@ function SM.ToggleNextStepTracker()
     Refresh()
 end
 
--- Whether the tracker shows this chapter (for the story it follows or not).
+local function IsFollowed(data)
+    return data ~= nil and data.id ~= nil and SM.GetFollowedStoryID and SM.GetFollowedStoryID() == data.id
+end
+
+-- Whether the tracker shows this chapter right now: its story is the one
+-- followed, and the chapter is one the tracker would list for it.
 local function IsShown(data, ch)
+    if not IsFollowed(data) then return false end
     return ShownChapterQuest(data, ch, SM.IsExplorerMode and SM.IsExplorerMode()) ~= nil
+end
+SM.IsChapterInTracker = IsShown
+
+function SM.IsStoryTracked(data)
+    return IsFollowed(data)
+end
+
+-- Follows a story in the next-step tracker, in place of the one followed,
+-- or stops following it (tracked: true, false, or nil to switch).
+function SM.ToggleTrackedStory(data, tracked)
+    if not (data and data.id) then return end
+    if tracked == nil then tracked = not IsFollowed(data) end
+    if SM.SetFollowedStoryID then SM.SetFollowedStoryID(tracked and data.id or nil) end
+    if SM.Client.isForever then PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON) end
+    print(L["Addon Prefix"] .. string.format(tracked and L["Tracker Chapter Tracked Format"] or L["Tracker Chapter Untracked Format"], data.title))
+    Refresh()
+    if SM.RefreshStoryListState then SM.RefreshStoryListState() end
+    if SM.RefreshTrackNodeBadges then SM.RefreshTrackNodeBadges() end
 end
 
 -- The hint a chapter's node on the Progress track shows, or nil when it
@@ -963,6 +989,8 @@ function SM.ToggleTrackedChapter(data, ch, tracked)
     if SM.Client.isForever then PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON) end
     print(L["Addon Prefix"] .. string.format(tracked and L["Tracker Chapter Tracked Format"] or L["Tracker Chapter Untracked Format"], ch.chapter))
     Refresh()
+    if SM.RefreshStoryListState then SM.RefreshStoryListState() end
+    if SM.RefreshTrackNodeBadges then SM.RefreshTrackNodeBadges() end
 end
 
 local events = CreateFrame("Frame")

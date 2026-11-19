@@ -272,6 +272,8 @@ function SM.SetWaypointForQuest(data, quest, quiet)
             SM.SetChapterTrackState(data, quest._chapter, nil)
         end
         if SM.RefreshNextStepTracker then SM.RefreshNextStepTracker() end
+        if SM.RefreshStoryListState then SM.RefreshStoryListState() end
+        if SM.RefreshTrackNodeBadges then SM.RefreshTrackNodeBadges() end
     end
 
     if SM.IsClassicClient() then

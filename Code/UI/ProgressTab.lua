@@ -1,6 +1,22 @@
 local _, SM = ...
 local L = SM.L
 
+-- After the followed story or a chapter's tracking changes: each shown
+-- chapter node's tracked checkbox and its tooltip's track hint.
+function SM.RefreshTrackNodeBadges()
+    local nodes = SM.DetailUI and SM.DetailUI.dTrackNodes
+    if not nodes then return end
+    for _, node in ipairs(nodes) do
+        local data, ch = node.trackData, node.trackChapter
+        if node:IsShown() and data and ch then
+            node.trackHint = SM.GetChapterTrackHint and SM.GetChapterTrackHint(data, ch) or nil
+            if node.trackedBadge then
+                node.trackedBadge:SetShown(SM.IsChapterInTracker and SM.IsChapterInTracker(data, ch) or false)
+            end
+        end
+    end
+end
+
 function SM.LayoutProgressTab(data, w, contentW, visibleContentW)
     local ui = SM.DetailUI
     local detailChild = ui.detailChild
@@ -93,6 +109,10 @@ function SM.LayoutProgressTab(data, w, contentW, visibleContentW)
             node.tooltipProgress = qDone .. " / " .. qTotal .. " quests"
             node.tooltipAchievementID = ch.achievementID or nil
             node.trackHint = SM.GetChapterTrackHint and SM.GetChapterTrackHint(data, ch) or nil
+            node.trackData, node.trackChapter = data, ch
+            if node.trackedBadge then
+                node.trackedBadge:SetShown(SM.IsChapterInTracker and SM.IsChapterInTracker(data, ch) or false)
+            end
 
             -- Status styling
             if ch.loreOnly and not isComplete then
@@ -176,11 +196,13 @@ function SM.LayoutProgressTab(data, w, contentW, visibleContentW)
             -- Click handler
             local idx = i
             node:SetScript("OnClick", function(self, button)
-                if button == "RightButton" then
-                    -- Track or untrack the chapter in the next-step tracker.
+                if button == "RightButton" then return end
+                -- Shift-left-click tracks or untracks the chapter in the
+                -- next-step tracker, as the quest log does quests.
+                if IsShiftKeyDown() then
                     if SM.ToggleTrackedChapter then
                         SM.ToggleTrackedChapter(data, ch)
-                        self.trackHint = SM.GetChapterTrackHint(data, ch)
+                        SM.RefreshTrackNodeBadges()
                         local onEnter = self:GetScript("OnEnter")
                         if onEnter and self:IsMouseOver() then onEnter(self) end
                     end

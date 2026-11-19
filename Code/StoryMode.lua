@@ -942,10 +942,23 @@ end
 local dChapterAchievementCard  -- assigned after CreateAchievementRow is defined
 
 -- ── Track node pool ─────────────────────────────────────────────────
+-- The tracking crosshair that says "in the next-step tracker", on chapter
+-- nodes. Hidden until shown.
+function SM.CreateTrackedBadge(parent, size)
+    local badge = CreateFrame("Frame", nil, parent)
+    badge:SetSize(size, size)
+    badge:SetFrameLevel(parent:GetFrameLevel() + 10)
+    local icon = badge:CreateTexture(nil, "OVERLAY")
+    icon:SetAllPoints()
+    SM.SetTrackedIconTexture(icon)
+    badge:Hide()
+    return badge
+end
+
 function SM.CreateTrackNode(parent)
     local btn = CreateFrame("Button", nil, parent)
     btn:SetSize(TRACK_NODE_SIZE, TRACK_NODE_SIZE)
-    -- Right-click tracks the chapter in the next-step tracker (WoW Forever).
+    -- Shift-click tracks the chapter in the next-step tracker (WoW Forever).
     btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
     -- Portrait
@@ -1025,6 +1038,11 @@ function SM.CreateTrackNode(parent)
     checkmark:SetPoint("BOTTOMRIGHT", portrait, "BOTTOMRIGHT", 5, -5)
     checkmark:Hide()
     btn.checkmark = checkmark
+
+    -- Tracked badge (top-left): the tracking crosshair while the chapter is
+    -- in the next-step tracker. Its own frame, above any frame art on the node.
+    btn.trackedBadge = SM.CreateTrackedBadge(btn, 24)
+    btn.trackedBadge:SetPoint("TOPLEFT", portrait, "TOPLEFT", -6, 6)
 
     -- Active glow (same as hover but always-on for selected node)
     local activeGlow = btn:CreateTexture(nil, "ARTWORK", nil, 3)
