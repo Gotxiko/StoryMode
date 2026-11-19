@@ -65,6 +65,8 @@ local TITLE_GAP = 4         -- under the quest title
 local STEP_GAP = 6          -- under the step's text, before its objectives
 local QUEST_TOP = 8         -- between a chapter heading and its quest
 local ENTRY_GAP = 12        -- between one chapter's quest and the next heading
+local SUB_GAP = 8           -- between two quests of the same chapter
+local INSTANCE_ICON_SIZE = 14  -- the dungeon or raid icon before a quest's title
 -- The chapter bar: Blizzard's widget status bar (Interface/Widgets/
 -- WidgetStatusBar), its 18 px background scaled to BAR_H, with the 31 px
 -- border around it and the spark at the fill's end.
@@ -583,6 +585,9 @@ local function NewEntry()
             if giver and giver ~= "" then GameTooltip:AddLine(giver, 1, 1, 1, true) end
             -- A nudge toward the step (a vaguer one in Explorer mode).
             local hint = SM.GetQuestHint and SM.GetQuestHint(nextQuest)
+            if not hint and not inLog and SM.IsExplorerMode and SM.IsExplorerMode() and SM.GetExplorerFallbackHint then
+                hint = SM.GetExplorerFallbackHint(data, nextQuest, entry.chapter)
+            end
             if hint then
                 GameTooltip:AddLine(" ")
                 GameTooltip:AddLine(hint, 0.55, 0.85, 1, true)
@@ -661,13 +666,23 @@ local function ShownChapterQuest(data, ch, explorer)
     return nextQuest
 end
 
--- The chapters to show, in story order, each with its next quest.
+-- The chapters to show, in story order, each with its next quest, then
+-- (sub = true, under the same heading) the chapter's other quests that are
+-- in the log: side quests and steps that run alongside the chain.
 local function ChaptersToShow(data)
     local list = {}
     local explorer = SM.IsExplorerMode and SM.IsExplorerMode()
     for _, ch in ipairs(SM.GetAllChapters(data)) do
         local nextQuest = ShownChapterQuest(data, ch, explorer)
-        if nextQuest then list[#list + 1] = { chapter = ch, quest = nextQuest } end
+        if nextQuest then
+            list[#list + 1] = { chapter = ch, quest = nextQuest }
+            for _, q in ipairs(ch.quests or {}) do
+                if q ~= nextQuest and SM.IsQuestForPlayer(q) and not SM.ShouldHideQuest(q)
+                    and SM.IsQuestEntryInLog(q) then
+                    list[#list + 1] = { chapter = ch, quest = q, sub = true }
+                end
+            end
+        end
     end
     return list
 end
@@ -675,7 +690,7 @@ end
 -- The lines under a quest: { text =, finished =, plain = } each. First the
 -- step's text from its quest card (plain), then, once the quest is
 -- in the log, its live objectives, or before that who gives it and where.
-local function QuestLines(data, nextQuest, gateReason, explorer)
+local function QuestLines(data, nextQuest, gateReason, explorer, chapter)
     if gateReason then return { { text = gateReason } } end
     local list = {}
     local inLog, questID = SM.IsQuestEntryInLog(nextQuest)
@@ -699,7 +714,12 @@ local function QuestLines(data, nextQuest, gateReason, explorer)
         -- In Explorer mode, the step's vague hint instead of who and where.
         local giver
         if explorer then
+            -- A step without a hint still says roughly where to look,
+            -- unless its own text above already does.
             giver = SM.GetQuestHint and SM.GetQuestHint(nextQuest)
+            if not giver and #list == 0 and SM.GetExplorerFallbackHint then
+                giver = SM.GetExplorerFallbackHint(data, nextQuest, chapter)
+            end
         else
             giver = SM.GetQuestGiverText and SM.GetQuestGiverText(data, nextQuest)
         end
@@ -730,49 +750,65 @@ local function LayoutEntry(entry, data, item, anchor, width, explorer)
     entry.data, entry.chapter, entry.nextQuest, entry.locked = data, chapter, nextQuest, gateReason ~= nil
     local section, quest = entry.section, entry.quest
 
-    -- The heading.
+    -- Another quest of the chapter above: no heading of its own, right
+    -- under the quest before (and gone with it when the chapter is folded).
     local folded = IsFolded(data, chapter)
-    section.text:SetText(chapter.chapter)
-    section.text:SetWidth(0)
-    local textH = section.text:GetStringHeight()
-    local foldH = math.max(8, math.floor(textH - 2 + 0.5))
-    local foldW = HasAtlas(ATLAS.collapse) and foldH + 4 or 0
-    section.text:SetWidth(math.min(section.text:GetStringWidth(), width - HEADING_TEXT_X - foldW - FOLD_RIGHT - 4))
-    local sectionH = math.floor(textH + HEADING_PAD * 2 + 0.5)
-    section:ClearAllPoints()
-    -- Right under the plate; further down under the chapter before.
-    local topGap = anchor == plate and 4 or ENTRY_GAP
-    section:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -topGap)
-    section:SetPoint("TOPRIGHT", anchor, "BOTTOMRIGHT", 0, -topGap)
-    section:SetHeight(sectionH)
-    section.text:ClearAllPoints()
-    section.text:SetPoint("LEFT", section, "LEFT", HEADING_TEXT_X, 0)
-    if not PlaceStrip(section, ATLAS.section) then
-        section.bg = section.bg or section:CreateTexture(nil, "BACKGROUND")
-        section.bg:SetAllPoints()
-        section.bg:SetColorTexture(0, 0, 0, 0.45)
-    end
-    local foldAtlas = folded and ATLAS.expand or ATLAS.collapse
-    section.fold:SetShown(HasAtlas(foldAtlas))
-    if HasAtlas(foldAtlas) then
-        section.fold:SetAtlas(foldAtlas)
-        section.fold:SetSize(foldH, foldH)
-        section.fold:ClearAllPoints()
-        section.fold:SetPoint("RIGHT", section, "RIGHT", -FOLD_RIGHT, 0)
-    end
-    section:Show()
+    local height
+    if item.sub then
+        section:Hide()
+        if folded then
+            quest:Hide()
+            return anchor, 0
+        end
+        quest:ClearAllPoints()
+        quest:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -SUB_GAP)
+        quest:SetPoint("TOPRIGHT", anchor, "BOTTOMRIGHT", 0, -SUB_GAP)
+        height = SUB_GAP
+    else
+        -- The heading.
+        section.text:SetText(chapter.chapter)
+        section.text:SetWidth(0)
+        local textH = section.text:GetStringHeight()
+        local foldH = math.max(8, math.floor(textH - 2 + 0.5))
+        local foldW = HasAtlas(ATLAS.collapse) and foldH + 4 or 0
+        section.text:SetWidth(math.min(section.text:GetStringWidth(), width - HEADING_TEXT_X - foldW - FOLD_RIGHT - 4))
+        local sectionH = math.floor(textH + HEADING_PAD * 2 + 0.5)
+        section:ClearAllPoints()
+        -- Right under the plate; further down under the chapter before.
+        local topGap = anchor == plate and 4 or ENTRY_GAP
+        section:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -topGap)
+        section:SetPoint("TOPRIGHT", anchor, "BOTTOMRIGHT", 0, -topGap)
+        section:SetHeight(sectionH)
+        section.text:ClearAllPoints()
+        section.text:SetPoint("LEFT", section, "LEFT", HEADING_TEXT_X, 0)
+        if not PlaceStrip(section, ATLAS.section) then
+            section.bg = section.bg or section:CreateTexture(nil, "BACKGROUND")
+            section.bg:SetAllPoints()
+            section.bg:SetColorTexture(0, 0, 0, 0.45)
+        end
+        local foldAtlas = folded and ATLAS.expand or ATLAS.collapse
+        section.fold:SetShown(HasAtlas(foldAtlas))
+        if HasAtlas(foldAtlas) then
+            section.fold:SetAtlas(foldAtlas)
+            section.fold:SetSize(foldH, foldH)
+            section.fold:ClearAllPoints()
+            section.fold:SetPoint("RIGHT", section, "RIGHT", -FOLD_RIGHT, 0)
+        end
+        section:Show()
 
-    local height = topGap + sectionH
-    if folded then
-        quest:Hide()
-        return section, height
+        height = topGap + sectionH
+        if folded then
+            quest:Hide()
+            return section, height
+        end
+
+        quest:ClearAllPoints()
+        quest:SetPoint("TOPLEFT", section, "BOTTOMLEFT", 0, -QUEST_TOP)
+        quest:SetPoint("TOPRIGHT", section, "BOTTOMRIGHT", 0, -QUEST_TOP)
+        height = height + QUEST_TOP
     end
 
-    quest:ClearAllPoints()
-    quest:SetPoint("TOPLEFT", section, "BOTTOMLEFT", 0, -QUEST_TOP)
-    quest:SetPoint("TOPRIGHT", section, "BOTTOMRIGHT", 0, -QUEST_TOP)
-
-    local list, inLog, questID = QuestLines(data, nextQuest, gateReason, explorer)
+    local list, inLog, questID = QuestLines(data, nextQuest, gateReason, explorer, chapter)
     local glyph, grey = QuestGlyph(gateReason, inLog, questID)
     quest.glyph:SetShown(HasAtlas(glyph))
     if HasAtlas(glyph) then quest.glyph:SetAtlas(glyph) end
@@ -783,7 +819,13 @@ local function LayoutEntry(entry, data, item, anchor, width, explorer)
     quest.glyph:SetAlpha(grey and 0.75 or 1)
 
     quest.title:SetWidth(width - TITLE_X - 6)
-    quest.title:SetText(nextQuest.name or "")
+    -- A dungeon or raid step starts with the quest log's icon for it.
+    local _, instanceIcon = SM.GetInstanceQuestTag and SM.GetInstanceQuestTag(nextQuest)
+    local titleText = nextQuest.name or ""
+    if instanceIcon and HasAtlas(instanceIcon) then
+        titleText = string.format("|A:%s:%d:%d|a %s", instanceIcon, INSTANCE_ICON_SIZE, INSTANCE_ICON_SIZE, titleText)
+    end
+    quest.title:SetText(titleText)
     local y = quest.title:GetStringHeight() + TITLE_GAP
 
     for i = 1, math.max(MAX_LINES, #entry.lines) do
@@ -811,9 +853,10 @@ local function LayoutEntry(entry, data, item, anchor, width, explorer)
     end
 
     -- Guided: how far into the chapter. Explorer gives nothing ahead away.
+    -- Once per chapter, under its first quest.
     local bar = entry.bar
     local done, total = SM.GetChapterProgress(chapter)
-    if not explorer and total and total > 0 then
+    if not explorer and not item.sub and total and total > 0 then
         -- The border reaches past the bar on every side: room for it.
         bar:ClearAllPoints()
         bar:SetPoint("TOPLEFT", quest, "TOPLEFT", LINE_X + BAR_OVERHANG, -(y + BAR_OVERHANG_Y + 1))
@@ -835,7 +878,7 @@ local function LayoutEntry(entry, data, item, anchor, width, explorer)
     quest:SetHeight(questH)
     quest:Show()
     PaintQuest(entry)
-    return quest, height + QUEST_TOP + questH
+    return quest, height + questH
 end
 
 local function Hide()

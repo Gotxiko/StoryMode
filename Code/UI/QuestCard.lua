@@ -271,6 +271,7 @@ local function GetInstanceQuestTag(quest)
     if tag then return _G[tag.label] or tag.fallback, tag.icon end
     return nil
 end
+SM.GetInstanceQuestTag = GetInstanceQuestTag
 
 -- A turn-in day the way Legacy writes a challenge's date (13/11/26 or
 -- 11/13/26, by the client's region).

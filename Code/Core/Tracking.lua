@@ -186,16 +186,42 @@ function SM.IsExplorerHiddenStart(quest)
     return true
 end
 
--- The zone part of such a step's location: the text after its last comma
--- ("..., Bosque del Ocaso"), else the zone of its map, else the story's.
-function SM.GetExplorerStartArea(data, quest)
-    local location = quest and quest.location
+local function LastPart(location)
     local area = location and location:match(".*,%s*(.-)%s*$")
     if area and area ~= "" then return area end
-    local info = quest and quest.mapID and C_Map and C_Map.GetMapInfo
-        and C_Map.GetMapInfo(SM.GetClientMapID and SM.GetClientMapID(quest.mapID) or quest.mapID)
-    if info and info.name then return info.name end
-    return data and data.zone or nil
+    return nil
+end
+
+local function MapName(mapID)
+    local info = mapID and C_Map and C_Map.GetMapInfo
+        and C_Map.GetMapInfo(SM.GetClientMapID and SM.GetClientMapID(mapID) or mapID)
+    return info and info.name or nil
+end
+
+-- Roughly where a step happens, for Explorer mode: the zone part of its
+-- location (the text after the last comma, "..., Bosque del Ocaso"), its
+-- map's zone, its giver's map's zone or place, else the story's zone.
+function SM.GetExplorerStartArea(data, quest)
+    if not quest then return data and data.zone or nil end
+    local npc = data and data.npcLocations and quest.npc and data.npcLocations[quest.npc]
+    return LastPart(quest.location) or MapName(quest.mapID)
+        or (npc and (MapName(npc.mapID) or LastPart(npc.location)))
+        or (data and data.zone) or nil
+end
+
+-- What the tracker says under a step in Explorer mode when the step has no
+-- hint: the chapter's description (the tracker only lists chapters the
+-- player has reached there), else roughly where to look, never who or
+-- exactly where.
+function SM.GetExplorerFallbackHint(data, quest, chapter)
+    local summary = chapter and SM.GetChapterText and SM.GetChapterText(chapter, "summary")
+    if summary and summary ~= "" then return summary end
+    local area = SM.GetExplorerStartArea(data, quest)
+    local hasGiver = quest and quest.npc and quest.npc ~= ""
+    if area and area ~= "" then
+        return string.format(hasGiver and L["Explorer Hint Giver Format"] or L["Explorer Hint Search Format"], area)
+    end
+    return L["Explorer Hint Explore"]
 end
 
 local function GetQuestLocation(data, quest)

@@ -1664,11 +1664,19 @@ LayoutSelectedChapter = function()
 
             if card.SetLegacyState then
                 -- WoW Forever's Legacy cards draw their state themselves.
-                stepNumber = stepNumber + 1
+                -- Step numbers follow the chain: a quest that runs alongside
+                -- the one before (parallel) shares its number, and side
+                -- quests (optional) have none, so they don't read as steps
+                -- that come after it.
+                local cardStep
+                if not qOptional then
+                    if not (q.parallel and stepNumber > 0) then stepNumber = stepNumber + 1 end
+                    cardStep = stepNumber
+                end
                 card:SetLegacyState((qDoneDisplay and "done") or (qInLog and "active")
                     or (qPassed and "passed")
                     or (qIsNextRecommended and "next") or (qOptional and "optional")
-                    or (lockReason and "locked") or "later", stepNumber, data, ch, q)
+                    or (lockReason and "locked") or "later", cardStep, data, ch, q)
                 card:Show()
             else
             card.icon:SetSize(14, 14)
