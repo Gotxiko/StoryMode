@@ -83,6 +83,31 @@ SM.ClassicWarlockQuestData = {
             },
         },
         {
+            -- An incubus instead of (or as well as) the succubus. The quests
+            -- are in Classic Era's quest table too, but only WoW Forever's
+            -- server has been seen to answer for them. Who gives Hearts of
+            -- the Lovers and What Is Love? isn't in the quest cache, and
+            -- which Horde warlocks go to which city is a guess, after the
+            -- Voidwalker chapter: Forsaken to the Undercity, the rest to
+            -- Orgrimmar.
+            chapter = "Incubus",
+            requiredLevel = 20,
+            optional = true,
+            gameVersions = { forever = true },
+            summary = "A succubus isn't the only sayaad who answers a warlock's call. An incubus can be lured too, with something that holds great love and devotion, and your trainer's scrying has already found it.",
+            recapAlliance = "An incubus, it turns out, can't resist true love. Neither can most people, but most people don't come with a summoning circle.\n\nThe lure was a wooden figurine, a keepsake of a young couple who've been gone for thousands of years, still sitting in a house past Maestra's Post in Ashenvale. I fetched it, took it down to the crypts below the Slaughtered Lamb, and set it in the circle.\n\nThe incubus came through, saw there was no lovesick fool waiting for him, and took it personally. I subdued him anyway, and Gakin the Darkbinder did the binding.\n\nWe get along. He thinks I'm unromantic. I think he's on the payroll.",
+            recapHorde = "An incubus, it turns out, can't resist true love, so the trick is finding some to borrow.\n\nIn Orgrimmar there's an orc named Magar, still waiting for his mate to come home from Ashenvale. All I found at Fallen Sky Lake was a withered scarf. Gan'rul Bloodeye said the love was still woven into it, and that he'd let Magar know what I'd found. In the Undercity they go about it differently: Carendin Halgar wants the hearts of two lovers from opposite ends of the world. I'll let you guess which teacher I went to.\n\nEither way, the incubus came through the circle, saw there was no lovesick fool waiting for him, and took it personally. I subdued him anyway.\n\nWe get along. He thinks I'm unromantic. I think he's on the payroll.",
+            quests = {
+                { id = 65593, name = "Hearts of the Lovers", race = "Scourge", faction = "Horde", location = "the Undercity", gameVersions = { forever = true } },
+                { id = 65597, name = "The Binding", npc = "Carendin Halgar", race = "Scourge", faction = "Horde", mapID = 90, x = 0.8506, y = 0.2599, location = "Carendin Halgar, Undercity", gameVersions = { forever = true } },
+                { id = 65601, name = "Love Hurts", npc = "Blind Cazul", excludeRace = "Scourge", faction = "Horde", location = "the Cleft of Shadow, Orgrimmar", gameVersions = { forever = true } },
+                { id = 65610, name = "Wish You Were Here", npc = "Magar", excludeRace = "Scourge", faction = "Horde", location = "Orgrimmar", gameVersions = { forever = true } },
+                { id = 65604, name = "The Binding", npc = "Gan'rul Bloodeye", excludeRace = "Scourge", faction = "Horde", mapID = 85, x = 0.4825, y = 0.4528, location = "Gan'rul Bloodeye, Orgrimmar", gameVersions = { forever = true } },
+                { id = 65602, name = "What Is Love?", faction = "Alliance", gameVersions = { forever = true } },
+                { id = 65603, name = "The Binding", npc = "Gakin the Darkbinder", faction = "Alliance", mapID = 84, x = 0.2525, y = 0.7856, location = "Gakin the Darkbinder, Stormwind", gameVersions = { forever = true } },
+            },
+        },
+        {
             chapter = "Felhunter",
             requiredLevel = 30,
             summary = "Your trainer sends you down to Ratchet to find Strahad Farsan, who knows how to bind a felhunter. A felhunter eats magic. You'll want to be very sure of the binding before you try it.",

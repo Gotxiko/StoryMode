@@ -47,6 +47,9 @@ local contentRegistry = {
     { key = "ForeverRivergladesData", category = "Stories" },
     { key = "ForeverAlcazPrisonData", category = "Stories" },
     { key = "ForeverDrownedCityData", category = "Stories" },
+    { key = "ForeverBloodmastersRingData", category = "Stories" },
+    { key = "ForeverHyjalFoothillsData", category = "Stories" },
+    { key = "ForeverFrizsLessonsData", category = "Stories" },
 
     { key = "DefiasBrotherhoodData", category = "Epic Stories" },
     { key = "DuskwoodData", category = "Epic Stories" },
@@ -84,6 +87,7 @@ local contentRegistry = {
     { key = "ThunderfuryData", category = "Short Stories" },
     -- WoW Forever's own questlines (Data/Forever).
     { key = "ForeverCozySleepingBagData", category = "Short Stories" },
+    { key = "ForeverPaxtonsLibraryData", category = "Short Stories" },
 
     { key = "SylvanasData", category = "Character Stories" },
     { key = "JainaData", category = "Character Stories" },
@@ -125,6 +129,8 @@ local contentRegistry = {
     { key = "PandarenHeritageData", category = "Identity" },
     { key = "DarkIronHeritageData", category = "Identity" },
     { key = "ForeverZephrasIsleData", category = "Identity" },  -- the Skyborne's starting story
+    { key = "ForeverEchoingOrbsData", category = "Identity" },  -- paladin
+    { key = "ForeverUnfinishedBusinessData", category = "Identity" },  -- paladin
 }
 
 local function GetContentRegistryData(entry)

@@ -107,11 +107,62 @@ end
 function SM.SetQuestCardMode(mode)
     if not StoryModeDB then return end
     StoryModeDB.questCardMode = mode == "explorer" and "explorer" or nil
+    if SM.RefreshNextStepTracker then SM.RefreshNextStepTracker() end
 end
 
 function SM.IsExplorerMode()
     return SM.GetQuestCardMode() == "explorer"
 end
+
+-- The story the next-step tracker follows: the last one this character
+-- began or continued. One per character, by story ID.
+function SM.GetFollowedStoryID()
+    local key = StoryModeDB and StoryModeDB.followedStory and CharacterKey()
+    return key and StoryModeDB.followedStory[key] or nil
+end
+
+function SM.SetFollowedStoryID(storyID)
+    local key = StoryModeDB and CharacterKey()
+    if not key then return end
+    StoryModeDB.followedStory = StoryModeDB.followedStory or {}
+    StoryModeDB.followedStory[key] = storyID
+end
+
+-- What the player chose for a chapter in the next-step tracker, by the
+-- chapter's English name (chapter._key), per character and story: true
+-- (shown though it isn't open yet), false (untracked), or nil (the default:
+-- shown while it's open).
+local function ChapterKey(ch)
+    return ch and (ch._key or ch.chapter)
+end
+
+local function ChapterTrackStates(storyID, create)
+    local key = StoryModeDB and CharacterKey()
+    if not (key and storyID) then return nil end
+    if create then
+        StoryModeDB.trackedChapters = StoryModeDB.trackedChapters or {}
+        StoryModeDB.trackedChapters[key] = StoryModeDB.trackedChapters[key] or {}
+        StoryModeDB.trackedChapters[key][storyID] = StoryModeDB.trackedChapters[key][storyID] or {}
+    end
+    local byStory = StoryModeDB.trackedChapters and StoryModeDB.trackedChapters[key]
+    return byStory and byStory[storyID]
+end
+
+function SM.GetChapterTrackState(data, ch)
+    local states = data and ChapterTrackStates(data.id, false)
+    if not states then return nil end
+    return states[ChapterKey(ch)]
+end
+
+-- Sets a chapter's choice (true, false or nil) and follows its story.
+function SM.SetChapterTrackState(data, ch, state)
+    if not (data and data.id and ch) then return end
+    local states = ChapterTrackStates(data.id, state ~= nil)
+    if states then states[ChapterKey(ch)] = state end
+    SM.SetFollowedStoryID(data.id)
+end
+
+SM.GetTrackedChapterKey = ChapterKey
 
 local function GetCharacterRecord(create)
     if not StoryModeDB then return nil end

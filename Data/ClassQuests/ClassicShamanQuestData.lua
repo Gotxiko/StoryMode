@@ -145,6 +145,28 @@ SM.ClassicShamanQuestData = {
             },
         },
         {
+            -- WoW Forever keeps Season of Discovery's Horde chain (the
+            -- Alliance has Forever's own copy, in Call of Air above). The
+            -- quest cache doesn't say who gives Elemental Aid or With Wind
+            -- Beneath Your Wings, or where Challenge of the Desert Wolf's
+            -- totem stands.
+            chapter = "The Quilboar Storm",
+            requiredLevel = 30,
+            faction = "Horde",
+            gameVersions = { forever = true },
+            summary = "Mastering the elements, it turns out, means owing them a favor. The quilboar have been twisting them for their own ends again, and Charlga Razorflank in Razorfen Kraul has notes on whatever they're planning.",
+            recap = "Mastering the elements, I learned, means owing them. Fair enough.\n\nThe quilboar were twisting the elements again, and Charlga Razorflank down in Razorfen Kraul had the plans, so I took them. The plan was a flood. They meant to drown the Thousand Needles in a storm of their own making. Ambitious, for quilboar.\n\nPrate Cloudseer put my training on hold and handed me a tome instead. I gathered the quilboar's twisted totems, called up the corrupted elementals at the steam pools, and put them down one by one. Freewind Post was grateful. The elementals, less so.\n\nThe storm left an eye behind, the Eye of the Tempest, and I carried it to Bath'rah in the Alterac Mountains, who knows what to do with such things.\n\nThe elements didn't thank me. They rarely do. But the canyon is still dry.",
+            quests = {
+                { id = 79360, name = "Elemental Aid", faction = "Horde", gameVersions = { forever = true } },
+                { id = 79364, name = "Eyes on the Sky", npc = "Rau Cliffrunner", faction = "Horde", location = "Freewind Post, Thousand Needles", gameVersions = { forever = true } },
+                { id = 79361, name = "Storm, Earth, and Fire", npc = "Prate Cloudseer", faction = "Horde", location = "Thousand Needles", gameVersions = { forever = true } },
+                { id = 79366, name = "Heed My Call", npc = "Prate Cloudseer", faction = "Horde", location = "Thousand Needles", gameVersions = { forever = true } },
+                { id = 79365, name = "With Wind Beneath Your Wings", faction = "Horde", optional = true, gameVersions = { forever = true } },
+                { id = 79442, name = "The Tempest's Weapons", npc = "Rau Cliffrunner", faction = "Horde", location = "Freewind Post, Thousand Needles", gameVersions = { forever = true } },
+                { id = 95753, name = "Challenge of the Desert Wolf", hint = "Find the odd totem beside the great sun-bleached skeleton. Once you touch it, the clock starts.", hintExplorer = "Look for something out of place among the old bones of the desert.", location = "an odd totem beside a great sun-bleached skeleton", optional = true, gameVersions = { forever = true } },
+            },
+        },
+        {
             chapter = "Elemental Mastery",
             requiredLevel = 50,
             faction = "Horde",

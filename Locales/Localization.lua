@@ -44,6 +44,8 @@ local function LocalizeQuest(quest)
     LocalizeField(quest, "displayName")
     LocalizeField(quest, "npc")
     LocalizeField(quest, "location")
+    LocalizeField(quest, "hint")
+    LocalizeField(quest, "hintExplorer")
     LocalizeField(quest, "trackingHint")
     LocalizeField(quest, "trackingHintFormat")
     LocalizeField(quest, "trackingHintQuestName")
@@ -62,6 +64,11 @@ end
 local function LocalizeChapter(chapter)
     if type(chapter) ~= "table" then return end
 
+    -- The English name, before translation: a key that stays the same in
+    -- every language (the next-step tracker's tracked chapters).
+    if type(chapter.chapter) == "string" and not chapter._key then
+        chapter._key = chapter.chapter
+    end
     LocalizeField(chapter, "chapter")
     LocalizeField(chapter, "summary")
     LocalizeField(chapter, "summaryAlliance")

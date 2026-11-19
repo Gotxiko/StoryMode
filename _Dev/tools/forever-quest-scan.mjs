@@ -556,6 +556,84 @@ function analyzeStory(story, context) {
   return findings;
 }
 
+// QuestSortIDs the game files class quests under.
+const CLASS_SORTS = { [-81]: "WARRIOR", [-82]: "SHAMAN", [-141]: "PALADIN", [-161]: "MAGE", [-162]: "ROGUE", [-261]: "HUNTER", [-262]: "PRIEST", [-263]: "DRUID", [-61]: "WARLOCK" };
+
+// Class quests no story uses, as chains, per class. The "nearby" check above
+// only looks at zones, and class quests sit under a class sort instead. Many
+// of them (Aeonas, The Mysterious Merchant) came from Season of Discovery, so
+// Classic Era's quest table has their IDs too and they don't count as new.
+function analyzeClassQuests(stories, context) {
+  const { quests, newIds, previousOf } = context;
+  const used = new Map();
+  for (const story of stories) for (const quest of story.quests) for (const id of [quest.id, quest.classicId, ...(quest.ids || [])]) if (id) used.set(id, story.title);
+  const classStories = new Map();
+  for (const story of stories) for (const cls of [story.class].flat().filter(Boolean)) {
+    if (!classStories.has(cls)) classStories.set(cls, []);
+    classStories.get(cls).push(story.title);
+  }
+  const byClass = new Map();
+  for (const quest of quests.values()) {
+    const cls = CLASS_SORTS[quest.sortID];
+    if (!cls || used.has(quest.id) || !quest.title || /^UNUSED$/i.test(quest.title)) continue;
+    if (!byClass.has(cls)) byClass.set(cls, new Set());
+    byClass.get(cls).add(quest.id);
+  }
+  const result = [];
+  for (const cls of Object.values(CLASS_SORTS)) {
+    const ids = byClass.get(cls);
+    if (!ids?.size) continue;
+    // A chain starts at a quest nothing else in the set leads into.
+    const chains = [];
+    const placed = new Set();
+    const starts = [...ids].filter((id) => !(previousOf.get(id) || []).some((prev) => ids.has(prev))).sort((a, b) => a - b);
+    for (const start of [...starts, ...[...ids].sort((a, b) => a - b)]) {
+      if (placed.has(start)) continue;
+      const chain = [];
+      for (let id = start; id && ids.has(id) && !placed.has(id); id = quests.get(id)?.nextQuest) {
+        placed.add(id);
+        chain.push(id);
+      }
+      const last = quests.get(chain[chain.length - 1]);
+      const from = (previousOf.get(chain[0]) || []).filter((prev) => used.has(prev));
+      chains.push({
+        quests: chain,
+        levels: chain.map((id) => quests.get(id).level),
+        newInForever: newIds ? chain.some((id) => newIds.has(id)) : null,
+        after: from.map((id) => ({ id, story: used.get(id) })),
+        leadsInto: last?.nextQuest && used.has(last.nextQuest) ? { id: last.nextQuest, story: used.get(last.nextQuest) } : null,
+      });
+    }
+    chains.sort((a, b) => Math.min(...a.levels) - Math.min(...b.levels) || a.quests[0] - b.quests[0]);
+    result.push({ class: cls, stories: classStories.get(cls) || [], quests: ids.size, chains });
+  }
+  return result;
+}
+
+function renderClassQuests(classes, context) {
+  const { quests, newIds } = context;
+  if (!classes.length) return "";
+  const lines = ["", "## Class quests no story uses", "", "Quests the game files under a class that no story lists, as Forever chains them. Only chains added after Classic 1.12 are listed: Season of Discovery quests Forever kept (IDs from 10000 up), and quests marked new because Classic Era's quest table lacks them. The original Classic quests the stories skip are counted, and listed in the JSON report."];
+  for (const entry of classes) {
+    const cls = entry.class[0] + entry.class.slice(1).toLowerCase();
+    const later = entry.chains.filter((chain) => chain.newInForever || chain.quests.some((id) => id >= 10000));
+    const original = entry.chains.length - later.length;
+    lines.push("", `### ${cls} (${entry.quests} quests${entry.stories.length ? `; class story: ${entry.stories.join(", ")}` : ""})`, "");
+    if (!later.length) lines.push("- Nothing added after Classic.");
+    for (const chain of later) {
+      const low = Math.min(...chain.levels), high = Math.max(...chain.levels);
+      const list = chain.quests.map((id) => label(id, quests, newIds)).join(" → ");
+      const notes = [
+        ...chain.after.map((from) => `follows ${from.id} in ${from.story}`),
+        chain.leadsInto ? `leads into ${chain.leadsInto.id} in ${chain.leadsInto.story}` : null,
+      ].filter(Boolean);
+      lines.push(`- Level ${low === high ? low : `${low}-${high}`}: ${list}` + (notes.length ? ` (${notes.join("; ")})` : ""));
+    }
+    if (original) lines.push(`- Plus ${original} original Classic chain${original === 1 ? "" : "s"} no story uses.`);
+  }
+  return lines.join("\n") + "\n";
+}
+
 function sameTitleNote(entry) {
   if (!entry.sameTitle?.length) return "";
   const ids = entry.sameTitle.slice(0, 20).join(", ") + (entry.sameTitle.length > 20 ? ", …" : "");
@@ -671,7 +749,9 @@ async function writeReport() {
   };
 
   await mkdir(reportDir, { recursive: true });
+  const classQuests = analyzeClassQuests(stories, context);
   let markdown = renderReport(stories, results, context, meta);
+  markdown += renderClassQuests(classQuests, context);
   if (hiddenAnswered.length) {
     markdown += "\n## Hidden on Forever, but the server answered\n\nThese lines have `forever = false` (or sit in a story or chapter that does), yet the server sent their quest. Check whether they can come back.\n\n";
     markdown += hiddenAnswered.map((quest) => `- ${quest.story}: ${quest.id} "${quest.name}"`).join("\n") + "\n";
@@ -682,6 +762,7 @@ async function writeReport() {
     scan: scan ? { build: scan.build, quests: scan.titles.size } : null,
     stories: stories.map((story, index) => ({ title: story.title, file: story.rel, ...results[index] })),
     hidden: hiddenQuests.map((quest) => ({ ...quest, answered: hiddenAnswered.includes(quest) })),
+    classQuests,
   }, null, 2));
 
   const changed = results.filter((result) => result.renamed.length || result.missing.length || result.chain.some((entry) => entry.addedByForever) || result.nearby.length).length;

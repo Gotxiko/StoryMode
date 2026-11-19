@@ -12,7 +12,7 @@
 ## Notes-zhCN: 逐章追随魔兽世界的故事，了解来龙去脉并追踪进度。|n|n使用聊天命令打开 Story Mode：|n/sm 或 /storymode
 ## Notes-zhTW: 逐章追隨魔獸世界的故事，了解來龍去脈並追蹤進度。|n|n使用聊天指令開啟 Story Mode：|n/sm 或 /storymode
 ## SavedVariables: StoryModeDB
-## OptionalDeps: LibDataBroker-1.1
+## OptionalDeps: LibDataBroker-1.1, ParchmentUI
 ## Version: 2.0.0
 ## Author: Rafael Polutta
 ## IconTexture: Interface\AddOns\StoryMode\Art\Icons\storymode_icon
@@ -88,6 +88,12 @@ Data\Forever\RivergladesData.lua
 Data\Forever\ShendralasData.lua
 Data\Forever\AzsharaData.lua
 Data\Forever\CozySleepingBagData.lua
+Data\Forever\BloodmastersRingData.lua
+Data\Forever\PaxtonsLibraryData.lua
+Data\Forever\HyjalFoothillsData.lua
+Data\Forever\FrizsLessonsData.lua
+Data\Forever\EchoingOrbsData.lua
+Data\Forever\UnfinishedBusinessData.lua
 Code\Core\Compatibility.lua
 Code\Core\SavedVariables.lua
 Code\Core\Scheduler.lua
@@ -110,6 +116,8 @@ Code\UI\MinimapButton.lua
 Code\UI\LoadingScreenBrowser.lua
 Code\UI\FactionCards.lua
 Code\UI\QuestCard.lua
+Code\UI\TrackerStack.lua
+Code\UI\NextStepTracker.lua
 Code\UI\LeftContextPanel.lua
 Code\UI\StoryTab.lua
 Code\UI\JournalTab.lua

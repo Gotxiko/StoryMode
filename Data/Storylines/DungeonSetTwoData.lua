@@ -295,6 +295,7 @@ SM.DungeonSetTwoData = {
                 { id = 9005, foreverId = 84201, name = "Saving the Best for Last", npc = "Deliana", faction = "Alliance", class = "WARLOCK" },
                 { id = 9004, foreverId = 84200, name = "Saving the Best for Last", npc = "Deliana", faction = "Alliance", class = "ROGUE" },
                 { id = 9002, foreverId = 84198, name = "Saving the Best for Last", npc = "Deliana", faction = "Alliance", class = "PALADIN" },
+                { id = 97450, name = "Saving the Best for Last", npc = "Deliana", faction = "Alliance", class = "SHAMAN", gameVersions = { forever = true } },
                 { id = 9008, foreverId = 84204, name = "Saving the Best for Last", npc = "Mokvar", faction = "Horde", class = "HUNTER" },
                 { id = 9014, foreverId = 84205, name = "Saving the Best for Last", npc = "Mokvar", faction = "Horde", class = "MAGE" },
                 { id = 9007, foreverId = 84203, name = "Saving the Best for Last", npc = "Mokvar", faction = "Horde", class = "DRUID" },

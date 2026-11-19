@@ -92,6 +92,7 @@ function SM.LayoutProgressTab(data, w, contentW, visibleContentW)
             local qDone, qTotal = SM.GetChapterQuestCount(ch)
             node.tooltipProgress = qDone .. " / " .. qTotal .. " quests"
             node.tooltipAchievementID = ch.achievementID or nil
+            node.trackHint = SM.GetChapterTrackHint and SM.GetChapterTrackHint(data, ch) or nil
 
             -- Status styling
             if ch.loreOnly and not isComplete then
@@ -174,7 +175,17 @@ function SM.LayoutProgressTab(data, w, contentW, visibleContentW)
 
             -- Click handler
             local idx = i
-            node:SetScript("OnClick", function()
+            node:SetScript("OnClick", function(self, button)
+                if button == "RightButton" then
+                    -- Track or untrack the chapter in the next-step tracker.
+                    if SM.ToggleTrackedChapter then
+                        SM.ToggleTrackedChapter(data, ch)
+                        self.trackHint = SM.GetChapterTrackHint(data, ch)
+                        local onEnter = self:GetScript("OnEnter")
+                        if onEnter and self:IsMouseOver() then onEnter(self) end
+                    end
+                    return
+                end
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                 SM.SetProgressSelectedChapter(idx)
                 StoryModeDB.selectedChapter = idx

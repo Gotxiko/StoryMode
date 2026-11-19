@@ -176,8 +176,31 @@ local function GetTrackedQuestID(quest)
     return activeID or quest.id
 end
 
+-- Explorer mode: a step with no giver starts from something found in the
+-- world (an item, a body, a ghost's drop). Until it's picked up, the story
+-- names only its zone and sets no waypoint, so finding it is the player's.
+function SM.IsExplorerHiddenStart(quest)
+    if not (quest and SM.IsExplorerMode and SM.IsExplorerMode()) then return false end
+    if quest.npc and quest.npc ~= "" then return false end
+    if SM.IsQuestEntryInLog(quest) or SM.IsQuestEntryComplete(quest) then return false end
+    return true
+end
+
+-- The zone part of such a step's location: the text after its last comma
+-- ("..., Bosque del Ocaso"), else the zone of its map, else the story's.
+function SM.GetExplorerStartArea(data, quest)
+    local location = quest and quest.location
+    local area = location and location:match(".*,%s*(.-)%s*$")
+    if area and area ~= "" then return area end
+    local info = quest and quest.mapID and C_Map and C_Map.GetMapInfo
+        and C_Map.GetMapInfo(SM.GetClientMapID and SM.GetClientMapID(quest.mapID) or quest.mapID)
+    if info and info.name then return info.name end
+    return data and data.zone or nil
+end
+
 local function GetQuestLocation(data, quest)
-    local questLocation = quest.mapID and quest.x and quest.y
+    local hidden = SM.IsExplorerHiddenStart(quest)
+    local questLocation = not hidden and quest.mapID and quest.x and quest.y
         and SM.GetClientLocation({ mapID = quest.mapID, x = quest.x, y = quest.y }) or nil
     local npcLocation = data.npcLocations and SM.GetClientLocation(data.npcLocations[quest.npc]) or nil
     local mapHint = (questLocation and questLocation.mapID)
@@ -233,8 +256,23 @@ local function TrackResult(kind, questID, loc, openedQuestLog, questOverride)
     }
 end
 
-function SM.SetWaypointForQuest(data, quest)
+-- quiet: set the waypoint and focus the quest, but open no map or quest log
+-- (the next-step tracker's click, made while playing).
+function SM.SetWaypointForQuest(data, quest, quiet)
     if not quest then return TrackResult("no_location") end
+    local function Ping(mapID, x, y)
+        if not quiet then PingOnWorldMap(mapID, x, y) end
+    end
+    -- Begin/Continue Story and /sm track all come through here, so this is
+    -- where the next-step tracker learns which story to follow.
+    if data and data.id and SM.SetFollowedStoryID then
+        SM.SetFollowedStoryID(data.id)
+        -- A chapter the player untracked comes back when they continue it.
+        if quest._chapter and SM.GetChapterTrackState and SM.GetChapterTrackState(data, quest._chapter) == false then
+            SM.SetChapterTrackState(data, quest._chapter, nil)
+        end
+        if SM.RefreshNextStepTracker then SM.RefreshNextStepTracker() end
+    end
 
     if SM.IsClassicClient() then
         local inLog, activeQuestID = SM.IsQuestEntryInLog(quest)
@@ -264,11 +302,11 @@ function SM.SetWaypointForQuest(data, quest)
         -- On WoW Forever the quest opens in the quest log beside the map, as
         -- it does on Classic. Its details turn the map to the quest's zone and
         -- close when the map moves on, so the ping only goes on that map.
-        local opened = SM.Client.isForever and SM.OpenQuestLogToQuest(logQuestID or qid) or false
+        local opened = not quiet and SM.Client.isForever and SM.OpenQuestLogToQuest(logQuestID or qid) or false
         local loc = GetQuestLocation(data, quest)
         local shownMapID = opened and WorldMapFrame and WorldMapFrame.GetMapID and WorldMapFrame:GetMapID()
         if loc and (not opened or shownMapID == loc.mapID) then
-            PingOnWorldMap(loc.mapID, loc.x, loc.y)
+            Ping(loc.mapID, loc.x, loc.y)
         end
         -- Not followed without map pins, so it points to the quest log.
         return TrackResult(pinsWanted and "supertracked" or "classic_in_log", qid, loc, opened)
@@ -291,16 +329,16 @@ function SM.SetWaypointForQuest(data, quest)
         if C_SuperTrack and C_SuperTrack.SetSuperTrackedUserWaypoint then
             C_SuperTrack.SetSuperTrackedUserWaypoint(true)
         end
-        PingOnWorldMap(loc.mapID, loc.x, loc.y)
+        Ping(loc.mapID, loc.x, loc.y)
         return TrackResult("waypoint", qid, loc, false, guidanceQuest)
     end
 
     if loc then
-        PingOnWorldMap(loc.mapID, loc.x, loc.y)
+        Ping(loc.mapID, loc.x, loc.y)
         return TrackResult("waypoint_approx", qid, loc, false, guidanceQuest)
     end
 
-    local startMapID = SM.GetClientMapID(data.startMapID)
+    local startMapID = not quiet and SM.GetClientMapID(data.startMapID)
     if startMapID then
         OpenStoryMap(startMapID)
     end
@@ -324,6 +362,9 @@ local function ColorTrackingLocation(text)
 end
 
 local function GetLocationText(data, quest, loc)
+    if SM.IsExplorerHiddenStart(quest) then
+        return ColorTrackingLocation(SM.GetExplorerStartArea(data, quest))
+    end
     if quest and quest.location then
         return ColorTrackingLocation(quest.location)
     end

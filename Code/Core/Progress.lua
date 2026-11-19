@@ -511,20 +511,89 @@ function SM.GetQuestlineGateReason(data, ch)
     return nil
 end
 
+-- Whether the story's prologue (data.prereqs) has been started, which opens
+-- its main chapters.
+local function HasPrereqProgress(data)
+    if not data.prereqs then return true end
+    for _, ch in ipairs(data.prereqs) do
+        if SM.GetChapterProgress(ch) > 0 then return true end
+    end
+    return false
+end
+
+-- One chapter's next step: the quest it has in the log ("log"), or the one
+-- it's ready for ("ready"), or nil when it has none right now.
+local function ChapterCandidate(ch, chIdx, hasPrereqProgress)
+    local unmetPrereq = SM.GetFirstUnmetChapterPrerequisite(ch)
+    if unmetPrereq then
+        return {
+            quest = {
+                id = unmetPrereq.id,
+                name = unmetPrereq.name,
+                npc = unmetPrereq.npc,
+                _isPrerequisiteForChapter = ch.chapter,
+            },
+            chapter = ch.chapter,
+            chapterData = ch,
+            section = ch._section or 1,
+            depth = 0,
+            order = chIdx,
+        }, "ready"
+    end
+    local chDone, chTotal = SM.GetChapterProgress(ch)
+    if chDone >= chTotal then return nil end
+    local section = ch._section or 1
+    local function Candidate(q, j)
+        return { quest = q, chapter = ch.chapter, chapterData = ch, section = section, depth = j, order = chIdx }
+    end
+    for j, q in ipairs(ch.quests or {}) do
+        if not SM.IsQuestForPlayer(q) or SM.ShouldHideQuest(q) then
+            -- skip the opposing faction's variant, or a branch the player didn't take
+        elseif SM.IsQuestEntryInLog(q) then
+            return Candidate(q, j), "log"
+        elseif not SM.IsQuestEffectivelyComplete(j, ch.quests) then
+            if j == 1 then
+                if (section >= 2 and hasPrereqProgress)
+                    or (section == 1 and chDone == 0 and not hasPrereqProgress) then
+                    return Candidate(q, j), "ready"
+                end
+                return nil
+            elseif SM.IsQuestEffectivelyComplete(j - 1, ch.quests) then
+                return Candidate(q, j), "ready"
+            end
+            return nil
+        end
+    end
+    return nil
+end
+
+-- The next quest of one chapter, for the next-step tracker. strict: only
+-- what the story itself would offer now (a quest in the log, or one ready
+-- to take), which makes the chapter "open". Otherwise a chapter the story
+-- wouldn't send the player to yet still names its first unfinished quest:
+-- the player chose to track it. Returns nil once the chapter is done.
+function SM.FindChapterNextQuest(data, ch, strict)
+    if not (data and ch) then return nil end
+    local candidate = ChapterCandidate(ch, ch._chapterIndex or 1, HasPrereqProgress(data))
+    if candidate then return candidate.quest end
+    if strict then return nil end
+    local chDone, chTotal = SM.GetChapterProgress(ch)
+    if chDone >= chTotal then return nil end
+    for j, q in ipairs(ch.quests or {}) do
+        if SM.IsQuestForPlayer(q) and not SM.ShouldHideQuest(q) and not SM.IsQuestEffectivelyComplete(j, ch.quests) then
+            return q
+        end
+    end
+    return nil
+end
+
 function SM.FindNextQuest(data)
     local cached = progressCache.nextQuest[data]
     if cached then
         return cached.quest, cached.chapter, cached.chapterData
     end
     local chapters = SM.GetAllChapters(data)
-    local hasPrereqProgress = not data.prereqs
-
-    if data.prereqs then
-        for _, ch in ipairs(data.prereqs) do
-            local d = SM.GetChapterProgress(ch)
-            if d > 0 then hasPrereqProgress = true; break end
-        end
-    end
+    local hasPrereqProgress = HasPrereqProgress(data)
 
     local logCandidates = {}
     local readyCandidates = {}
@@ -533,65 +602,11 @@ function SM.FindNextQuest(data)
         -- Optional chapters remain visible in the track, but they do not keep
         -- the main story CTA from reaching "Story Finished".
         if not ch.optional then
-            local unmetPrereq = SM.GetFirstUnmetChapterPrerequisite(ch)
-            if unmetPrereq then
-                readyCandidates[#readyCandidates + 1] = {
-                    quest = {
-                        id = unmetPrereq.id,
-                        name = unmetPrereq.name,
-                        npc = unmetPrereq.npc,
-                        _isPrerequisiteForChapter = ch.chapter,
-                    },
-                    chapter = ch.chapter,
-                    chapterData = ch,
-                    section = ch._section or 1,
-                    depth = 0,
-                    order = chIdx,
-                }
-            else
-                local chDone, chTotal = SM.GetChapterProgress(ch)
-                if chDone < chTotal then
-                    local section = ch._section or 1
-
-                    for j, q in ipairs(ch.quests or {}) do
-                        if not SM.IsQuestForPlayer(q) or SM.ShouldHideQuest(q) then
-                            -- skip the opposing faction's variant, or a branch the player didn't take
-                        elseif SM.IsQuestEntryInLog(q) then
-                            logCandidates[#logCandidates + 1] = {
-                                quest = q, chapter = ch.chapter,
-                                chapterData = ch,
-                                section = section, depth = j, order = chIdx,
-                            }
-                            break
-                        elseif not SM.IsQuestEffectivelyComplete(j, ch.quests) then
-                            if j == 1 then
-                                if section >= 2 and hasPrereqProgress then
-                                    readyCandidates[#readyCandidates + 1] = {
-                                        quest = q, chapter = ch.chapter,
-                                        chapterData = ch,
-                                        section = section, depth = j, order = chIdx,
-                                    }
-                                elseif section == 1 and chDone == 0 and not hasPrereqProgress then
-                                    readyCandidates[#readyCandidates + 1] = {
-                                        quest = q, chapter = ch.chapter,
-                                        chapterData = ch,
-                                        section = section, depth = j, order = chIdx,
-                                    }
-                                end
-                                break
-                            elseif SM.IsQuestEffectivelyComplete(j - 1, ch.quests) then
-                                readyCandidates[#readyCandidates + 1] = {
-                                    quest = q, chapter = ch.chapter,
-                                    chapterData = ch,
-                                    section = section, depth = j, order = chIdx,
-                                }
-                                break
-                            else
-                                break
-                            end
-                        end
-                    end
-                end
+            local candidate, kind = ChapterCandidate(ch, chIdx, hasPrereqProgress)
+            if kind == "log" then
+                logCandidates[#logCandidates + 1] = candidate
+            elseif kind == "ready" then
+                readyCandidates[#readyCandidates + 1] = candidate
             end
         end
     end

@@ -377,6 +377,8 @@ function SM.InitializeSlashCommands()
                 end
             end
             print(L["Addon Legacy Prefix"] .. L["Slash All Complete"])
+        elseif msg:match("^tracker") and SM.ToggleNextStepTracker then
+            SM.ToggleNextStepTracker()
         elseif msg:match("^scan") and SM.HandleScanCommand then
             SM.HandleScanCommand(msg)
         elseif msg:match("^debug") then

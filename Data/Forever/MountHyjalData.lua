@@ -65,7 +65,7 @@ SM.ForeverMountHyjalData = {
                 { id = 91952, name = "The Source of the Corruption", npc = "Greta Mosshoof", gameVersions = { forever = true } },
                 { id = 95568, name = "Seeds for a New Season", npc = "Ketharas", gameVersions = { forever = true } },
                 { id = 95569, name = "Hope for Hatchlings", npc = "Ketharas", gameVersions = { forever = true } },
-                { id = 90487, name = "Ancient Allies", location = "the hermit's cave, Mount Hyjal", mapID = 2482, x = 0.7320, y = 0.8180, gameVersions = { forever = true } },
+                { id = 90487, name = "Ancient Allies", hint = "Head west from the hermit's cave. The ancients and dryads gather on the lower slopes.", hintExplorer = "The ancients are not far from the hermit's cave.", location = "the hermit's cave, Mount Hyjal", mapID = 2482, x = 0.7320, y = 0.8180, gameVersions = { forever = true } },
                 { id = 92959, name = "The Dying Ancients", location = "the ancients' outpost, Mount Hyjal", mapID = 2482, x = 0.5360, y = 0.8440, gameVersions = { forever = true } },
                 { id = 95766, name = "Fine Feathered Friend", npc = "Fraxinus", gameVersions = { forever = true } },
             },

@@ -117,7 +117,7 @@ SM.ForeverAzsharaData = {
             quests = {
                 { id = 3504, name = "Betrayed", npc = "Belgrom Rockmaul", faction = "Horde", gameVersions = { forever = true } },
                 { id = 3505, name = "Betrayed", npc = "Ag'tor Bloodfist", faction = "Horde", location = "Valormok, Azshara", gameVersions = { forever = true } },
-                { id = 91497, name = "Seals of the Sin'dorei", faction = "Horde", location = "Magus Rimtori's camp, Azshara", gameVersions = { forever = true } },
+                { id = 91497, name = "Seals of the Sin'dorei", hint = "Magus Rimtori's camp holds three seals. Find all of them before you open the tome.", hintExplorer = "Magus Rimtori's camp holds what the tome needs.", faction = "Horde", location = "Magus Rimtori's camp, Azshara", gameVersions = { forever = true } },
                 { id = 91500, name = "An Explosive Gambit", faction = "Horde", location = "Magus Rimtori's camp, Azshara", gameVersions = { forever = true } },
                 { id = 91531, name = "Revenge Exacted", npc = "Ag'tor Bloodfist", faction = "Horde", gameVersions = { forever = true } },
                 { id = 91538, name = "Sin'dorei Tome of Summoning", faction = "Horde", location = "Magus Rimtori's camp, Azshara", gameVersions = { forever = true } },

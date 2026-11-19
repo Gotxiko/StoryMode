@@ -945,6 +945,8 @@ local dChapterAchievementCard  -- assigned after CreateAchievementRow is defined
 function SM.CreateTrackNode(parent)
     local btn = CreateFrame("Button", nil, parent)
     btn:SetSize(TRACK_NODE_SIZE, TRACK_NODE_SIZE)
+    -- Right-click tracks the chapter in the next-step tracker (WoW Forever).
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
     -- Portrait
     local portrait = btn:CreateTexture(nil, "ARTWORK")
@@ -1087,6 +1089,10 @@ function SM.CreateTrackNode(parent)
                 SMTooltip:AddLine(" ")
                 SMTooltip:AddLine(self.tooltipProgress, C_DIM[1], C_DIM[2], C_DIM[3])
             end
+            if self.trackHint then
+                SMTooltip:AddLine(" ")
+                SMTooltip:AddLine(self.trackHint, C_GOLD[1], C_GOLD[2], C_GOLD[3], true)
+            end
             if self.tooltipAchievementID then
                 local _, achName, _, achDone = GetAchievementInfo(self.tooltipAchievementID)
                 if achName then
@@ -1132,58 +1138,62 @@ function SM.OpenStoryModeToSelection(storyID, chapterIndex, tab)
         SM.SetActiveTab(tab)
     end
 
-    local attempts = 0
-    local function applySelection()
-        attempts = attempts + 1
-        if not storyFrame:IsShown() and attempts < 5 then
-            C_Timer.After(0, applySelection)
-            return
-        end
-
-        if SM.BuildStoryWindow then SM.BuildStoryWindow() end
-
-        local storyIndex = SM.GetStoryIndexByID and SM.GetStoryIndexByID(storyID) or nil
-        if not storyIndex and attempts < 5 then
-            C_Timer.After(0, applySelection)
-            return
-        end
-        if not storyIndex then return end
-
-        StoryModeDB.selectedQuestline = storyIndex
-        if tab and SM.SetActiveTab then
-            SM.SetActiveTab(tab)
-        end
-        if SM.SelectStory then
-            SM.SelectStory(storyIndex, StoryModeDB.selectedChapter)
-        end
-        detailScroll:SetVerticalScroll(0)
-
-        C_Timer.After(0, function()
-            if tab == "progress" then
-                SM.SetProgressSelectedChapter(StoryModeDB.selectedChapter or 1)
-                if SM.LayoutSelectedChapter then SM.LayoutSelectedChapter() end
-                if SM.CenterTrackOnSelected and dTrackClip then
-                    SM.CenterTrackOnSelected(dTrackClip:GetWidth())
-                end
-            elseif SM.LayoutDetailTab then
-                SM.LayoutDetailTab()
+    -- Draws the tab as a tab click does, with the chapter selected (on the
+    -- Progress tab, selecting the chapter alone left the page blank).
+    local function drawTab()
+        if not storyFrame:IsShown() or activeTab ~= tab then return end
+        if not (currentStoryData and currentStoryData.id == storyID) then return end
+        local w = detailScroll:GetWidth()
+        if w > 20 then detailChild:SetWidth(w) end
+        if tab == "progress" then
+            SM.SetProgressSelectedChapter(StoryModeDB.selectedChapter or 1)
+            if SM.LayoutDetailTab then SM.LayoutDetailTab() end
+            if SM.LayoutSelectedChapter then SM.LayoutSelectedChapter() end
+            if SM.CenterTrackOnSelected and dTrackClip then
+                SM.CenterTrackOnSelected(dTrackClip:GetWidth())
             end
-        end)
+        elseif SM.LayoutDetailTab then
+            SM.LayoutDetailTab()
+        end
     end
 
+    -- The window open: select the story now.
+    local function applySelection()
+        if SM.BuildStoryWindow then SM.BuildStoryWindow() end
+        local storyIndex = SM.GetStoryIndexByID and SM.GetStoryIndexByID(storyID) or nil
+        if not storyIndex then return end
+        StoryModeDB.selectedQuestline = storyIndex
+        if tab and SM.SetActiveTab then SM.SetActiveTab(tab) end
+        if SM.SelectStory then SM.SelectStory(storyIndex, StoryModeDB.selectedChapter) end
+        detailScroll:SetVerticalScroll(0)
+        C_Timer.After(0, drawTab)
+    end
+
+    if storyFrame:IsShown() then
+        applySelection()
+        return true
+    end
+
+    -- The window closed: open it the usual way. Its OnShow builds the list,
+    -- sizes the panel and selects the saved story (set above) on the tab set
+    -- above, as when the player opens it. Selecting the story ourselves
+    -- alongside that left the page blank on the window's first show. Once
+    -- OnShow has selected it, draw the tab with the chapter.
     if SM.ShowStoryModeFrame then
         SM.ShowStoryModeFrame()
     elseif SM.ToggleStoryModeFrame then
         SM.ToggleStoryModeFrame()
     end
-
-    if storyFrame:IsShown() then
-        applySelection()
-    else
-        -- The first Classic open can need a frame for the panel and scroll
-        -- child to exist at their final size before selecting the linked page.
-        C_Timer.After(0, applySelection)
+    local waits = 0
+    local function afterShow()
+        waits = waits + 1
+        if not (storyFrame:IsShown() and currentStoryData and currentStoryData.id == storyID) then
+            if waits < 40 then C_Timer.After(0.05, afterShow) end
+            return
+        end
+        C_Timer.After(0, drawTab)
     end
+    C_Timer.After(0, afterShow)
 
     return true
 end
@@ -1631,6 +1641,8 @@ LayoutSelectedChapter = function()
                 card.tooltipStatus = nil
             end
             card.tooltipRequirement = lockReason
+            -- Finished steps need no nudge.
+            card.tooltipHint = (not qDoneDisplay and not qPassed) and SM.GetQuestHint(q) or nil
 
             if card.SetLegacyState then
                 -- WoW Forever's Legacy cards draw their state themselves.

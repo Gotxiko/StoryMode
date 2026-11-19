@@ -156,6 +156,10 @@ function SM.RefreshQuestCardTooltip(card, requestQuestData)
     if card.tooltipRequirement then
         SMTooltip:AddLine(card.tooltipRequirement, 1.0, 0.82, 0.35, true)
     end
+    if card.tooltipHint and card.tooltipHint ~= "" then
+        SMTooltip:AddLine(" ")
+        SMTooltip:AddLine(card.tooltipHint, 0.55, 0.85, 1, true)
+    end
 
     SMTooltip:Show()
 end
@@ -279,12 +283,20 @@ end
 -- Who gives the quest and where, from the story data.
 local function GetQuestGiverText(data, quest)
     local npc = quest and quest.npc or ""
+    -- Explorer mode names only the zone of a step found in the world.
+    if SM.IsExplorerHiddenStart and SM.IsExplorerHiddenStart(quest) then
+        return SM.GetExplorerStartArea(data, quest) or ""
+    end
     local location = quest and (quest.location
         or (data and data.npcLocations and data.npcLocations[quest.npc] and data.npcLocations[quest.npc].location))
     if location and location ~= "" then
         -- Class quest lines already name the giver in their location
         -- ("Myrokos Silentform, Ravenholdt Manor, Alterac Mountains").
-        if npc == "" or location:sub(1, #npc) == npc then return location end
+        -- Locations are written to sit mid-sentence in chat ("the Lost
+        -- Knight, ..."), so one standing alone gets a capital. Only an ASCII
+        -- first letter: %l never matches a UTF-8 lead byte.
+        if npc == "" then return (location:gsub("^%l", string.upper)) end
+        if location:sub(1, #npc) == npc then return location end
         return npc .. ", " .. location
     end
     return npc
@@ -293,6 +305,19 @@ end
 -- The selected outline is a thin gold frame with round corners. An open card
 -- is taller than the art, so the outline is drawn in three slices: the top
 -- and bottom rows keep their size and only the straight sides stretch.
+-- The next-step tracker shows the same giver and objective lines.
+SM.GetQuestCardText = GetQuestCardText
+SM.GetQuestGiverText = GetQuestGiverText
+
+-- A nudge toward the step. In Explorer mode a step's hintExplorer, which
+-- only says roughly where to look, wins over its fuller hint.
+function SM.GetQuestHint(quest)
+    if not quest then return nil end
+    local hint = (SM.IsExplorerMode and SM.IsExplorerMode() and quest.hintExplorer) or quest.hint
+    if hint and hint ~= "" then return hint end
+    return nil
+end
+
 local function CreateOutline(card, layer, alpha)
     local info = C_Texture.GetAtlasInfo(LEGACY.selected)
     local file = info and (info.file or info.filename)
@@ -724,6 +749,7 @@ local function CreateLegacyQuestCard(parent)
             self.title:SetText(L["Quest Undiscovered Title"])
             self.tooltipTitle, self.tooltipNPC = L["Quest Undiscovered Title"], nil
             self.tooltipStatus, self.tooltipRequirement = nil, nil
+            self.tooltipHint = nil
         else
             SM.SetChapterPortrait(self.portrait, displayID, iconPath, quest and quest.id)
         end

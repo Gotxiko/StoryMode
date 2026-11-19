@@ -55,8 +55,8 @@ SM.ForeverCozySleepingBagData = {
             recap = "The plank sent me up into the Stonetalon Mountains, to a camp tucked away where nobody would ever stumble on it. Whoever lived there had left in a hurry. Crates still full of tools. Two good sturdy bags. And the sort of pocket litter you only leave behind when you're in a rush to be somewhere else.\n\nThe litter pointed me to the edge of the cliff, and then, as far as I could tell, over it. So I jumped.\n\nThey call that a leap of faith. I call it a very long moment. I came down on a ledge below in one piece, right beside a mound of fresh dirt. Somebody had been digging there, and not long ago.\n\nI'd come this far. I wasn't going to be stopped by a pile of dirt.",
             quests = {
                 -- The plank stands by the remains the note was turned in at: the other faction's.
-                { id = 79192, name = "Stepping Stones", faction = "Alliance", mapID = 1413, x = 0.4610, y = 0.7430, location = "Burned-Out Remains, The Barrens", gameVersions = { forever = true } },
-                { id = 79192, name = "Stepping Stones", faction = "Horde", mapID = 1436, x = 0.3710, y = 0.5010, location = "Burned-Out Remains, Westfall", gameVersions = { forever = true } },
+                { id = 79192, name = "Stepping Stones", hint = "A note is nailed to a plank in the Burned-Out Remains. Read it to continue.", hintExplorer = "Someone left word in the Burned-Out Remains.", faction = "Alliance", mapID = 1413, x = 0.4610, y = 0.7430, location = "Burned-Out Remains, The Barrens", gameVersions = { forever = true } },
+                { id = 79192, name = "Stepping Stones", hint = "A note is nailed to a plank in the Burned-Out Remains. Read it to continue.", hintExplorer = "Someone left word in the Burned-Out Remains.", faction = "Horde", mapID = 1436, x = 0.3710, y = 0.5010, location = "Burned-Out Remains, Westfall", gameVersions = { forever = true } },
                 { id = 79980, name = "Scramble", mapID = 1442, x = 0.4060, y = 0.5240, location = "Abandoned camp, Stonetalon Mountains", gameVersions = { forever = true } },
             },
         },
@@ -65,9 +65,9 @@ SM.ForeverCozySleepingBagData = {
             summary = "On the ledge below the abandoned camp in the Stonetalon Mountains sits a mound of fresh dirt. Somebody was digging here not long ago. You've followed this trail across an ocean. A pile of dirt isn't going to stop you.",
             recap = "The dirt gave up a messenger bag with a parchment in it, and the parchment sent me clear across the sea to Stonewrought Dam, where a carved eagle on the stone heads pointed its fist at Thoradin's Wall. Lovely view, if you like heights.\n\nUp on the old wall was one more bag and one last note. Whoever had left it was gone. I'd just missed them, by the look of it. And under the note was what the whole trail had been guarding, across two continents, a cliff and a dam.\n\nA sleeping bag. A cozy one.\n\nI'd love to tell you I was disappointed. I wasn't. It's a very good sleeping bag.",
             quests = {
-                { id = 79974, name = "Wet Job", mapID = 1442, x = 0.3960, y = 0.4990, location = "Mound of Dirt, Stonetalon Mountains", gameVersions = { forever = true } },
-                { id = 79975, name = "Eagle's Fist", mapID = 1432, x = 0.4940, y = 0.1290, location = "Stonewrought Dam, Loch Modan", gameVersions = { forever = true } },
-                { id = 79976, name = "This Must Be The Place", mapID = 1417, x = 0.2250, y = 0.2420, location = "Thoradin's Wall, Arathi Highlands", gameVersions = { forever = true } },
+                { id = 79974, name = "Wet Job", hint = "Look for a mound of dirt in Stonetalon Mountains. Something is half-buried in it.", hintExplorer = "The trail continues in Stonetalon Mountains. Keep an eye on the ground.", mapID = 1442, x = 0.3960, y = 0.4990, location = "Mound of Dirt, Stonetalon Mountains", gameVersions = { forever = true } },
+                { id = 79975, name = "Eagle's Fist", hint = "The trail leads to the Stonewrought Dam in Loch Modan. Climb up and take in the view.", hintExplorer = "The trail heads to Loch Modan.", mapID = 1432, x = 0.4940, y = 0.1290, location = "Stonewrought Dam, Loch Modan", gameVersions = { forever = true } },
+                { id = 79976, name = "This Must Be The Place", hint = "The trail ends at Thoradin's Wall in Arathi Highlands. Someone was here, and not long ago.", hintExplorer = "The trail heads to Arathi Highlands.", mapID = 1417, x = 0.2250, y = 0.2420, location = "Thoradin's Wall, Arathi Highlands", gameVersions = { forever = true } },
             },
         },
     },
