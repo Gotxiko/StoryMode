@@ -143,6 +143,10 @@ end
 --   parallel = true   runs alongside the step before it (same step);
 --   after = id | {ids} opens once those quests are done, not the step
 --                     before (a branch: the chapter splits into chains).
+--   feeds = id | {ids} gets something those quests ask for, so it counts
+--                     as passed once they're done.
+--   untracked = true  the client can't report it done (no QuestV2 row on
+--                     WoW Forever), so a later quest being done passes it.
 -- Any other quest waits on the whole step before it, parallel quests
 -- included. Optional quests and other factions' quests are never waited on.
 
@@ -204,6 +208,25 @@ function SM.IsQuestEffectivelyComplete(questIndex, chapterQuests)
 
     if SM.IsQuestEntryInLog(q) then return false end
     if SM.IsQuestEntryComplete(q) then return true end
+    -- A quest that feeds another (gets an item that one asks for) is passed
+    -- once that one is done: the item may have come another way.
+    if q.feeds then
+        for _, id in ipairs(type(q.feeds) == "table" and q.feeds or { q.feeds }) do
+            if SM.IsQuestComplete(id) then return true end
+        end
+    end
+    -- A quest the client can never report done (WoW Forever's QuestV2
+    -- table has no row, so no completion bit, for it) is passed once any
+    -- later quest of its chapter is done.
+    if q.untracked then
+        for i = questIndex + 1, #chapterQuests do
+            local laterQuest = chapterQuests[i]
+            if SM.IsQuestForPlayer(laterQuest) and not SM.ShouldHideQuest(laterQuest)
+                and SM.IsQuestEntryComplete(laterQuest) then
+                return true
+            end
+        end
+    end
 
     for i = 1, questIndex - 1 do
         if SM.IsQuestForPlayer(chapterQuests[i]) and SM.IsQuestEntryInLog(chapterQuests[i]) then

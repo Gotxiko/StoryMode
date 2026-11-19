@@ -150,8 +150,8 @@ SM.ClassicPaladinQuestData = {
             quests = {
                 { id = 1653, name = "The Test of Righteousness", npc = "Duthorian Rall", faction = "Alliance", mapID = 84, x = 0.3981, y = 0.2980, location = "Duthorian Rall, Stormwind" },
                 { id = 1654, name = "The Test of Righteousness", npc = "Jordan Stilwell", faction = "Alliance", mapID = 27, x = 0.5249, y = 0.3692, location = "Jordan Stilwell, Dun Morogh" },
-                { id = 1655, name = "Bailor's Ore Shipment", after = {}, npc = "Bailor Stonehand", faction = "Alliance", mapID = 48, x = 0.3595, y = 0.4491, location = "Bailor Stonehand, Loch Modan" },
-                { id = 1442, name = "Seeking the Kor Gem", after = 1653, npc = "Thundris Windweaver", faction = "Alliance", mapID = 62, x = 0.3740, y = 0.4013, location = "Thundris Windweaver, Auberdine, Darkshore" },
+                { id = 1655, name = "Bailor's Ore Shipment", after = {}, feeds = 1654, npc = "Bailor Stonehand", faction = "Alliance", mapID = 48, x = 0.3595, y = 0.4491, location = "Bailor Stonehand, Loch Modan" },
+                { id = 1442, name = "Seeking the Kor Gem", after = 1653, feeds = 1654, npc = "Thundris Windweaver", faction = "Alliance", mapID = 62, x = 0.3740, y = 0.4013, location = "Thundris Windweaver, Auberdine, Darkshore" },
                 { id = 1806, name = "The Test of Righteousness", after = 1654, npc = "Jordan Stilwell", faction = "Alliance", mapID = 27, x = 0.5249, y = 0.3692, location = "Jordan Stilwell, Dun Morogh" },
             },
         },

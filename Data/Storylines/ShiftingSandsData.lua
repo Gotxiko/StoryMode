@@ -79,7 +79,7 @@ SM.ShiftingSandsData = {
                 { id = 8286, name = "What Tomorrow Brings", npc = "Baristolth of the Shifting Sands" },
                 { id = 8288, name = "Only One May Rise", npc = "Baristolth of the Shifting Sands" },
                 { id = 8301, name = "The Path of the Righteous", npc = "Baristolth of the Shifting Sands" },
-                { id = 8302, name = "The Hand of the Righteous", npc = "Baristolth of the Shifting Sands", optional = true },
+                { id = 8302, name = "The Hand of the Righteous", untracked = true, npc = "Baristolth of the Shifting Sands", optional = true },
                 { id = 8303, name = "Anachronos", npc = "Baristolth of the Shifting Sands" },
             },
         },

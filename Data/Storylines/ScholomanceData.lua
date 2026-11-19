@@ -145,7 +145,7 @@ SM.ScholomanceData = {
                 { id = 5531, name = "Betina Bigglezink", npc = "Leonid Barthalomew the Revered", optional = true },
                 { id = 4771, name = "Dawn's Gambit", npc = "Betina Bigglezink", optional = true, recap = "Leonid Barthalomew sent me over to Betina Bigglezink with some frozen eggs, and Betina sent me back into Scholomance with something called Dawn's Gambit, to set down in the Viewing Room. A gambit, as I understand it, means giving up a piece to win the game. I made sure the piece was Vectus." },
                 { id = 5529, name = "Plagued Hatchlings", npc = "Betina Bigglezink", optional = true },
-                { id = 5582, name = "Healthy Dragon Scale", location = "Scholomance", optional = true, recap = "Betina Bigglezink at Light's Hope wanted twenty plagued dragon hatchlings put down in Scholomance. Somewhere in all that plague I found one healthy dragon scale, and brought that back too. I don't know what Betina wanted it for. In Scholomance, anything healthy is worth a second look." },
+                { id = 5582, name = "Healthy Dragon Scale", untracked = true, location = "Scholomance", optional = true, recap = "Betina Bigglezink at Light's Hope wanted twenty plagued dragon hatchlings put down in Scholomance. Somewhere in all that plague I found one healthy dragon scale, and brought that back too. I don't know what Betina wanted it for. In Scholomance, anything healthy is worth a second look." },
             },
         },
     },
