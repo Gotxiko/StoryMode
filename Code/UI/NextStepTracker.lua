@@ -67,6 +67,8 @@ local QUEST_TOP = 8         -- between a chapter heading and its quest
 local ENTRY_GAP = 12        -- between one chapter's quest and the next heading
 local SUB_GAP = 8           -- between two quests of the same chapter
 local INSTANCE_ICON_SIZE = 14  -- the dungeon or raid icon before a quest's title
+local MAX_LIST_SHARE = 0.45   -- the chapters scroll past this share of the screen's height
+local SCROLL_STEP = 40         -- how far one turn of the mouse wheel moves them
 -- The chapter bar: Blizzard's widget status bar (Interface/Widgets/
 -- WidgetStatusBar), its 18 px background scaled to BAR_H, with the 31 px
 -- border around it and the spark at the fill's end.
@@ -168,7 +170,13 @@ local function FontObject(...)
     return GameFontNormal
 end
 
-local PLATE_FONT = FontObject("GameFontHighlightLarge", "GameFontNormalLarge")
+-- The story's title on the plate: the large highlight font, 2 points smaller.
+local PLATE_FONT = CreateFont("StoryModeTrackerPlateFont")
+PLATE_FONT:SetFontObject(FontObject("GameFontHighlightLarge", "GameFontNormalLarge"))
+do
+    local path, size, flags = PLATE_FONT:GetFont()
+    if path and size then PLATE_FONT:SetFont(path, math.max(10, size - 2), flags or "") end
+end
 local SECTION_FONT = FontObject("GameFontNormalMed2", "GameFontNormalLarge", "GameFontNormal")
 local LINE_FONT = FontObject("ObjectiveTrackerLineFont", "ObjectiveFont", "GameFontHighlight")
 -- The lines under a quest title (the step's text from its quest card and
@@ -185,6 +193,17 @@ local B             -- the block
 local plate
 local entries = {}  -- one per chapter shown: { section =, quest =, lines =, bar = }
 local stack, slot
+local scroll, content, listTop  -- the chapters' scroll frame, its child, the top of the list
+
+-- How far a heading's strip reaches past the heading: sideways past its
+-- edges, and up and down at most half the art's height.
+local function StripOverflow()
+    local info = C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(ATLAS.section)
+    if not (info and (info.width or 0) > 0) then return 0, 0 end
+    local x = math.ceil(math.max(0, (info.width - STRIP_FRAME) / 2)) + 2
+    local y = math.ceil((info.height or 0) / 2)
+    return x, y
+end
 
 local function IsHiddenByPlayer()
     return StoryModeDB and StoryModeDB.nextStepTrackerHidden
@@ -309,6 +328,8 @@ local function CreateBlock()
 
     -- The Lorewalking plate: the story's title, and the X to stop following.
     plate = CreateFrame("Button", nil, B)
+    -- Over the chapters' list, so what scrolls up goes under the plate.
+    plate:SetFrameLevel(B:GetFrameLevel() + 10)
     plate:SetPoint("TOPLEFT")
     plate:SetPoint("TOPRIGHT")
     plate.bg = plate:CreateTexture(nil, "BACKGROUND")
@@ -316,8 +337,6 @@ local function CreateBlock()
     SetAtlasOr(plate.bg, ATLAS.plate)
     plate.text = NewText(plate, PLATE_FONT)
     plate.text:SetMaxLines(2)
-    -- The story's zone, small and gold, on one line under the title.
-    plate.zone = NewText(plate, FontObject("GameFontNormalSmall", "GameFontNormal"), false)
     plate:RegisterForClicks("LeftButtonUp")
     plate:SetScript("OnClick", function() OpenStory(B.data, nil) end)
     -- The story's title and description, as its card in the Story Mode
@@ -421,6 +440,24 @@ local function CreateBlock()
         GameTooltip:Hide()
     end)
 
+    -- The chapters scroll under the plate, which stays put: past a share of
+    -- the screen's height, the mouse wheel moves them.
+    scroll = CreateFrame("ScrollFrame", nil, B)
+    scroll:SetClipsChildren(true)
+    content = CreateFrame("Frame", nil, scroll)
+    content:SetSize(DEFAULT_W, 1)
+    scroll:SetScrollChild(content)
+    -- The first heading hangs from this, at the top of the list (placed
+    -- with the clip's margins in Refresh).
+    listTop = CreateFrame("Frame", nil, content)
+    listTop:SetHeight(1)
+    scroll:EnableMouseWheel(true)
+    scroll:SetScript("OnMouseWheel", function(self, delta)
+        local maxScroll = math.max(0, (content:GetHeight() or 0) - self:GetHeight())
+        local target = self:GetVerticalScroll() - delta * SCROLL_STEP
+        self:SetVerticalScroll(math.min(maxScroll, math.max(0, target)))
+    end)
+
     stack = SM.GetTrackerStack and SM.GetTrackerStack()
     if stack then slot = stack.Register(B, ORDER, function() SM.RefreshNextStepTracker() end) end
 end
@@ -503,7 +540,7 @@ end
 local function NewEntry()
     local entry = { lines = {} }
 
-    local section = CreateFrame("Button", nil, B)
+    local section = CreateFrame("Button", nil, content)
     section.text = NewText(section, SECTION_FONT, false)
     section.text:SetTextColor(HEADING_COLOR[1], HEADING_COLOR[2], HEADING_COLOR[3])
     section.fold = section:CreateTexture(nil, "ARTWORK")
@@ -538,7 +575,7 @@ local function NewEntry()
     section:SetScript("OnLeave", function() GameTooltip:Hide() end)
     entry.section = section
 
-    local quest = CreateFrame("Button", nil, B)
+    local quest = CreateFrame("Button", nil, content)
     quest:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     quest.shield = quest:CreateTexture(nil, "ARTWORK", nil, 1)
     quest.shield:SetSize(SHIELD_SIZE, SHIELD_SIZE)
@@ -775,7 +812,7 @@ local function LayoutEntry(entry, data, item, anchor, width, explorer)
         local sectionH = math.floor(textH + HEADING_PAD * 2 + 0.5)
         section:ClearAllPoints()
         -- Right under the plate; further down under the chapter before.
-        local topGap = anchor == plate and 4 or ENTRY_GAP
+        local topGap = anchor == listTop and 4 or ENTRY_GAP
         section:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -topGap)
         section:SetPoint("TOPRIGHT", anchor, "BOTTOMRIGHT", 0, -topGap)
         section:SetHeight(sectionH)
@@ -903,51 +940,57 @@ function Refresh()
     B:SetWidth(width)
     B.data = data
 
-    -- The plate: the title and, under it, the story's zone, the two of them
-    -- centred on the plate. The title sits on its line by its bottom, so a
-    -- second line grows upward.
+    -- The plate: just the story's title, inside the parchment (the art's
+    -- frame takes its top). It stands on a line a little above the plate's
+    -- lower edge, so a second line grows upward.
     local plateH = math.floor(width * PLATE_RATIO + 0.5)
     plate:SetHeight(plateH)
-    local zone = SM.GetQuestlineZoneText and SM.GetQuestlineZoneText(data) or ""
-    plate.zone:SetText(zone)
-    plate.zone:SetShown(zone ~= "")
-    -- Stacked from the bottom: the zone on a fixed line near the plate's
-    -- lower edge, inside the parchment (the art's frame takes its top), and
-    -- the title standing on it (a second title line grows upward).
     local bottom = math.floor(plateH * PLATE_TEXT_BOTTOM + 0.5)
-    plate.zone:ClearAllPoints()
-    plate.zone:SetJustifyV("BOTTOM")
-    plate.zone:SetPoint("BOTTOMLEFT", plate, "BOTTOMLEFT", 22, bottom)
-    plate.zone:SetPoint("BOTTOMRIGHT", plate, "BOTTOMRIGHT", -PLATE_TEXT_RIGHT, bottom)
     plate.text:ClearAllPoints()
     plate.text:SetJustifyV("BOTTOM")
-    if zone ~= "" then
-        plate.text:SetPoint("BOTTOMLEFT", plate.zone, "TOPLEFT", 0, 2)
-        plate.text:SetPoint("BOTTOMRIGHT", plate.zone, "TOPRIGHT", 0, 2)
-    else
-        plate.text:SetPoint("BOTTOMLEFT", plate, "BOTTOMLEFT", 22, bottom)
-        plate.text:SetPoint("BOTTOMRIGHT", plate, "BOTTOMRIGHT", -PLATE_TEXT_RIGHT, bottom)
-    end
+    plate.text:SetPoint("BOTTOMLEFT", plate, "BOTTOMLEFT", 22, bottom)
+    plate.text:SetPoint("BOTTOMRIGHT", plate, "BOTTOMRIGHT", -PLATE_TEXT_RIGHT, bottom)
     plate.text:SetText(data.title)
     plate.close:ClearAllPoints()
     plate.close:SetPoint("RIGHT", plate, "RIGHT", -14, PLATE_CLOSE_Y)
 
     -- One heading and quest per chapter shown.
     local explorer = SM.IsExplorerMode and SM.IsExplorerMode()
-    local height = plateH
-    local anchor = plate
+    -- The scroll area clips what's in it, and the headings' strip reaches
+    -- past their edges, so the clip reaches as far: the list sits that far
+    -- in from the scroll area's edges, and the area that far out from the
+    -- block's.
+    local clipX, clipY = StripOverflow()
+    scroll:ClearAllPoints()
+    scroll:SetPoint("TOPLEFT", plate, "BOTTOMLEFT", -clipX, clipY)
+    scroll:SetPoint("TOPRIGHT", plate, "BOTTOMRIGHT", clipX, clipY)
+    content:SetWidth(width + clipX * 2)
+    listTop:ClearAllPoints()
+    listTop:SetPoint("TOPLEFT", content, "TOPLEFT", clipX, -clipY)
+    listTop:SetPoint("TOPRIGHT", content, "TOPRIGHT", -clipX, -clipY)
+
+    local listH = 0
+    local anchor = listTop
     for i, item in ipairs(shown) do
         local entry = entries[i] or NewEntry()
         local last, h = LayoutEntry(entry, data, item, anchor, width, explorer)
         anchor = last
-        height = height + h
+        listH = listH + h
     end
     for i = #shown + 1, #entries do
         entries[i].section:Hide()
         entries[i].quest:Hide()
     end
 
-    height = math.floor(height + 0.5)
+    -- The list shows whole up to a share of the screen, and scrolls past it.
+    listH = math.floor(listH + 0.5)
+    local maxListH = math.floor((UIParent:GetHeight() or 768) * MAX_LIST_SHARE)
+    local shownListH = math.min(listH, maxListH)
+    content:SetHeight(listH + clipY * 2)
+    scroll:SetHeight(shownListH + clipY * 2)
+    -- Keep the scroll inside the list as it shrinks.
+    scroll:SetVerticalScroll(math.min(scroll:GetVerticalScroll(), math.max(0, listH - shownListH)))
+    local height = math.floor(plateH + shownListH + 0.5)
     B:SetHeight(height)
     -- The stack makes room for the block and a little more under it.
     if stack and slot then stack.Set(slot, true, height + BOTTOM_PAD) else B:Show() end
