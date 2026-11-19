@@ -196,6 +196,26 @@ function SM.CreateInsetCardShade(parent, alpha, subLevel)
     return shade
 end
 
+-- Mouse icons in interaction hints: strings carry {lclick}, {rclick} and
+-- {shift}, and each becomes the housing editor's hotkey icon
+-- (Interface/Housing/HousingHotkeys2x) inline where the client has that
+-- atlas, else its word ("Left-click:", "Mayús").
+local HOTKEY_ATLAS = { lclick = "housing-hotkey-icon-leftclick", rclick = "housing-hotkey-icon-rightclick" }
+local HOTKEY_WORD = { lclick = "Hotkey Left Click", rclick = "Hotkey Right Click", shift = "Hotkey Shift" }
+local HOTKEY_ICON_SIZE = 16
+
+function SM.FormatHotkeys(text)
+    if type(text) ~= "string" then return text end
+    return (text:gsub("{(%a+)}", function(key)
+        local atlas = HOTKEY_ATLAS[key]
+        if atlas and C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(atlas) then
+            return string.format("|A:%s:%d:%d|a", atlas, HOTKEY_ICON_SIZE, HOTKEY_ICON_SIZE)
+        end
+        local word = HOTKEY_WORD[key]
+        return word and SM.L[word] or nil
+    end))
+end
+
 -- The tracking crosshair, for "in the next-step tracker": its atlas where
 -- the client has it, else the cursor texture it comes from.
 function SM.SetTrackedIconTexture(tex)

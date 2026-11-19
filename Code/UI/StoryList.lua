@@ -904,7 +904,7 @@ local function CreateStoryListCard(data, idx, cardHeight, cardPadding, yOffset, 
             -- What shift-right-click does here, in gold.
             local tracked = SM.IsStoryTracked and SM.IsStoryTracked(data)
             SMTooltip:AddLine(data.title, 1, 1, 1)
-            SMTooltip:AddLine(tracked and L["Story Card Untrack"] or L["Story Card Track"], 1.0, 0.82, 0)
+            SMTooltip:AddLine(SM.FormatHotkeys(tracked and L["Story Card Untrack"] or L["Story Card Track"]), 1.0, 0.82, 0)
         end
         SMTooltip:Show()
     end)

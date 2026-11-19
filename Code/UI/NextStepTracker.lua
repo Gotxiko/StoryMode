@@ -351,7 +351,7 @@ local function CreateBlock()
             GameTooltip:AddLine(description, 1, 1, 1, true)
         end
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(L["Tracker Tooltip Plate"], 0.7, 0.7, 0.7)
+        GameTooltip:AddLine(SM.FormatHotkeys(L["Tracker Tooltip Plate"]), 0.7, 0.7, 0.7)
         GameTooltip:Show()
     end)
     plate:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -569,7 +569,7 @@ local function NewEntry()
             GameTooltip:AddLine(summary, 1, 1, 1, true)
         end
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(L["Tracker Tooltip Heading"], 0.7, 0.7, 0.7, true)
+        GameTooltip:AddLine(SM.FormatHotkeys(L["Tracker Tooltip Heading"]), 0.7, 0.7, 0.7, true)
         GameTooltip:Show()
     end)
     section:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -650,8 +650,8 @@ local function NewEntry()
             end
         end
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(L["Tracker Tooltip Left Click"], 0.7, 0.7, 0.7)
-        GameTooltip:AddLine(L["Tracker Tooltip Right Click"], 0.7, 0.7, 0.7)
+        GameTooltip:AddLine(SM.FormatHotkeys(L["Tracker Tooltip Left Click"]), 0.7, 0.7, 0.7)
+        GameTooltip:AddLine(SM.FormatHotkeys(L["Tracker Tooltip Right Click"]), 0.7, 0.7, 0.7)
         GameTooltip:Show()
     end)
     quest:SetScript("OnLeave", function()
@@ -1049,10 +1049,10 @@ end
 -- can't be tracked (finished, or not reached yet in Explorer mode).
 function SM.GetChapterTrackHint(data, ch)
     if not (data and ch) then return nil end
-    if IsShown(data, ch) then return L["Tracker Node Untrack"] end
+    if IsShown(data, ch) then return SM.FormatHotkeys(L["Tracker Node Untrack"]) end
     if not WithStory(data, SM.FindChapterNextQuest, data, ch, false) then return nil end
     if SM.IsExplorerMode and SM.IsExplorerMode() and not WithStory(data, SM.IsChapterReached, data, ch) then return nil end
-    return L["Tracker Node Track"]
+    return SM.FormatHotkeys(L["Tracker Node Track"])
 end
 
 -- Tracks a chapter of a story in the next-step tracker, or untracks it
