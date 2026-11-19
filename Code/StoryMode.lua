@@ -1616,6 +1616,29 @@ LayoutSelectedChapter = function()
     local nextQuestID = nextQuest and nextQuest.id
     local stepNumber = 0
 
+    -- Once the player has reached the chapter (a quest of it done, in the
+    -- log, or next), every quest that's open (what it waits on is done:
+    -- quests alongside the next one, branches) shows as next too, not as a
+    -- later or hidden one.
+    local function IsNextQuestEntry(q)
+        if not nextQuestID then return false end
+        for _, questID in ipairs(SM.GetQuestIDs(q)) do
+            if questID == nextQuestID then return true end
+        end
+        return false
+    end
+    local chapterReached = false
+    for _, q in ipairs(ch.quests) do
+        if SM.IsQuestForPlayer(q) and not SM.ShouldHideQuest(q)
+            and (SM.IsQuestEntryInLog(q) or SM.IsQuestEntryComplete(q) or IsNextQuestEntry(q)) then
+            chapterReached = true
+            break
+        end
+    end
+    -- Each card's step: one more than the step it waits on, so a branch
+    -- counts on from where the chapter splits; parallel quests share it.
+    local stepOf = {}
+
     for i, q in ipairs(ch.quests) do
         if not dQuestCards[i] then
             dQuestCards[i] = SM.CreateQuestCard(detailChild)
@@ -1628,15 +1651,9 @@ LayoutSelectedChapter = function()
             local qInLog = SM.IsQuestEntryInLog(q)
             local qDoneDisplay = (not qInLog) and SM.IsQuestEntryComplete(q)
             local qPassed = (not qInLog) and SM.IsQuestEffectivelyComplete(i, ch.quests)
-            local qIsNextRecommended = false
-            if nextQuestID then
-                for _, questID in ipairs(SM.GetQuestIDs(q)) do
-                    if questID == nextQuestID then
-                        qIsNextRecommended = true
-                        break
-                    end
-                end
-            end
+            local qIsNextRecommended = IsNextQuestEntry(q)
+                or (chapterReached and not qOptional and not qInLog and not qDoneDisplay and not qPassed
+                    and SM.IsQuestOpen(ch.quests, i))
             local lockReason = (not qDoneDisplay and not qInLog and not qOptional and not qPassed) and SM.GetQuestLockReason(data, ch, i) or nil
 
             card.title:SetText(q.displayName or q.name)
@@ -1665,13 +1682,23 @@ LayoutSelectedChapter = function()
             if card.SetLegacyState then
                 -- WoW Forever's Legacy cards draw their state themselves.
                 -- Step numbers follow the chain: a quest that runs alongside
-                -- the one before (parallel) shares its number, and side
+                -- the one before (parallel) shares its number, a branch
+                -- (after) counts on from the quest it opens after, and side
                 -- quests (optional) have none, so they don't read as steps
                 -- that come after it.
                 local cardStep
                 if not qOptional then
-                    if not (q.parallel and stepNumber > 0) then stepNumber = stepNumber + 1 end
-                    cardStep = stepNumber
+                    if q.parallel then cardStep = stepOf[SM.GetQuestStepLead(ch.quests, i)] end
+                    if not cardStep and q.after then
+                        local deepest = 0
+                        for _, d in ipairs((SM.GetQuestDependencies(ch.quests, i))) do
+                            deepest = math.max(deepest, stepOf[d] or 0)
+                        end
+                        cardStep = deepest + 1
+                    end
+                    cardStep = cardStep or (stepNumber + 1)
+                    stepOf[i] = cardStep
+                    stepNumber = cardStep
                 end
                 card:SetLegacyState((qDoneDisplay and "done") or (qInLog and "active")
                     or (qPassed and "passed")

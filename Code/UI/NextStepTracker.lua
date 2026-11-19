@@ -705,7 +705,8 @@ end
 
 -- The chapters to show, in story order, each with its next quest, then
 -- (sub = true, under the same heading) the chapter's other quests that are
--- in the log: side quests and steps that run alongside the chain.
+-- in the log or open (what they wait on is done): side quests, quests that
+-- run alongside the next one, and the heads of other branches.
 local function ChaptersToShow(data)
     local list = {}
     local explorer = SM.IsExplorerMode and SM.IsExplorerMode()
@@ -713,10 +714,14 @@ local function ChaptersToShow(data)
         local nextQuest = ShownChapterQuest(data, ch, explorer)
         if nextQuest then
             list[#list + 1] = { chapter = ch, quest = nextQuest }
-            for _, q in ipairs(ch.quests or {}) do
-                if q ~= nextQuest and SM.IsQuestForPlayer(q) and not SM.ShouldHideQuest(q)
-                    and SM.IsQuestEntryInLog(q) then
-                    list[#list + 1] = { chapter = ch, quest = q, sub = true }
+            local quests = ch.quests or {}
+            for i, q in ipairs(quests) do
+                if q ~= nextQuest and SM.IsQuestForPlayer(q) and not SM.ShouldHideQuest(q) then
+                    local open = not q.optional and not SM.IsQuestEffectivelyComplete(i, quests)
+                        and SM.IsQuestOpen(quests, i)
+                    if SM.IsQuestEntryInLog(q) or open then
+                        list[#list + 1] = { chapter = ch, quest = q, sub = true }
+                    end
                 end
             end
         end

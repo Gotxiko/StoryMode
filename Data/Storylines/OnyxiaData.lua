@@ -229,8 +229,8 @@ SM.OnyxiaData = {
             recap = "Emberstrife wanted proof, and dragons keep their proof in skulls. Four of them, one from the champion of each of the other flights: blue up in Winterspring, green in the Swamp of Sorrows, red on the road to Grim Batol, and bronze guarding the Caverns of Time. That's a lot of map for one shopping list, and not one of them went down easy.\n\nI hauled the lot back to the Wyrmbog, still wearing my borrowed face, and came away with a dull old amulet and one large problem. The next step was inside Blackrock Spire, and the disguise wouldn't hold up in there.\n\nThe charade was over. So I went to find Rexxar again, which, as you'll remember, takes a while.",
             quests = {
                 { id = 6582, name = "The Test of Skulls, Scryer", npc = "Emberstrife" },
-                { id = 6583, name = "The Test of Skulls, Somnus", npc = "Emberstrife" },
-                { id = 6584, name = "The Test of Skulls, Chronalis", npc = "Emberstrife" },
+                { id = 6583, name = "The Test of Skulls, Somnus", parallel = true, npc = "Emberstrife" },
+                { id = 6584, name = "The Test of Skulls, Chronalis", parallel = true, npc = "Emberstrife" },
                 { id = 6585, name = "The Test of Skulls, Axtroz", npc = "Emberstrife" },
                 { id = 6601, name = "Ascension...", npc = "Emberstrife" },
             },

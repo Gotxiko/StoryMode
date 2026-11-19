@@ -83,7 +83,7 @@ SM.DarrowshireData = {
             recap = "Carlin Redpath had the annals now, and Carlin wanted the last battle of Darrowshire put right. Putting it right, it turned out, takes a great many relics off the dead.\n\nA villain's skull and another villain's broken sword. A hero's libram, and the shield of Pamela's father. And five skulls that resonated, which meant sorting through a great many skulls that didn't. Most skulls, it turns out, have nothing to say.\n\nWhen it was all gathered, Carlin wrapped the lot in one bundle and sent me back to Chromie with it. Every hero and villain of that night, packed into one sack on my back. It was heavier than it looked.",
             quests = {
                 { id = 5181, name = "Villains of Darrowshire", npc = "Carlin Redpath" },
-                { id = 5168, name = "Heroes of Darrowshire", npc = "Carlin Redpath" },
+                { id = 5168, name = "Heroes of Darrowshire", parallel = true, npc = "Carlin Redpath" },
                 { id = 5206, name = "Marauders of Darrowshire", npc = "Carlin Redpath" },
                 { id = 5941, name = "Return to Chromie", npc = "Carlin Redpath" },
             },

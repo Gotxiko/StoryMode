@@ -138,6 +138,64 @@ function SM.ShouldHideQuest(q)
     return false
 end
 
+-- ── Quest trees ──────────────────────────────────────────────────────────
+-- A chapter's quests are listed in order, but they needn't be one chain:
+--   parallel = true   runs alongside the step before it (same step);
+--   after = id | {ids} opens once those quests are done, not the step
+--                     before (a branch: the chapter splits into chains).
+-- Any other quest waits on the whole step before it, parallel quests
+-- included. Optional quests and other factions' quests are never waited on.
+
+local function CountsAsStep(q)
+    return q ~= nil and not q.optional and SM.IsQuestForPlayer(q) and not SM.ShouldHideQuest(q)
+end
+
+local function QuestIndexByID(quests, id)
+    for i, q in ipairs(quests) do
+        for _, questID in ipairs(SM.GetQuestIDs(q)) do
+            if questID == id then return i end
+        end
+    end
+    return nil
+end
+
+-- What the quest at index waits on: indices of quests in the chapter, and
+-- IDs of quests outside it.
+function SM.GetQuestDependencies(quests, index)
+    local q = quests and quests[index]
+    if not q then return {}, {} end
+    if q.after then
+        local inside, outside = {}, {}
+        for _, id in ipairs(type(q.after) == "table" and q.after or { q.after }) do
+            local i = QuestIndexByID(quests, id)
+            if i then inside[#inside + 1] = i else outside[#outside + 1] = id end
+        end
+        return inside, outside
+    end
+    if q.parallel then
+        local lead = SM.GetQuestStepLead(quests, index)
+        if lead ~= index then return SM.GetQuestDependencies(quests, lead) end
+    end
+    local prev = index - 1
+    while prev >= 1 and not CountsAsStep(quests[prev]) do prev = prev - 1 end
+    if prev < 1 then return {}, {} end
+    local inside = {}
+    for i = SM.GetQuestStepLead(quests, prev), prev do
+        if CountsAsStep(quests[i]) then inside[#inside + 1] = i end
+    end
+    return inside, {}
+end
+
+-- Whether the quest at later waits, directly or down its chain, on the one
+-- at target.
+local function DependsOn(quests, later, target, depth)
+    if depth > #quests then return false end
+    for _, i in ipairs((SM.GetQuestDependencies(quests, later))) do
+        if i == target or (i > target and DependsOn(quests, i, target, depth + 1)) then return true end
+    end
+    return false
+end
+
 function SM.IsQuestEffectivelyComplete(questIndex, chapterQuests)
     local q = chapterQuests[questIndex]
     -- Quests for the opposing faction, or hidden by a choice the player made
@@ -153,15 +211,30 @@ function SM.IsQuestEffectivelyComplete(questIndex, chapterQuests)
         end
     end
 
+    -- Passed: a later quest that waits on this one, down its chain, is done
+    -- (a quest of another branch being done says nothing about this one).
     for i = questIndex + 1, #chapterQuests do
         local laterQuest = chapterQuests[i]
         if laterQuest and not laterQuest.parallel and SM.IsQuestForPlayer(laterQuest) and not SM.ShouldHideQuest(laterQuest)
-            and SM.IsQuestEntryComplete(laterQuest) then
+            and SM.IsQuestEntryComplete(laterQuest) and DependsOn(chapterQuests, i, questIndex, 0) then
             return true
         end
     end
 
     return false
+end
+
+-- Whether everything the quest at index waits on is done; if not, the
+-- first quest it's still waiting on.
+function SM.IsQuestOpen(quests, index)
+    local inside, outside = SM.GetQuestDependencies(quests, index)
+    for _, i in ipairs(inside) do
+        if not SM.IsQuestEffectivelyComplete(i, quests) then return false, quests[i] end
+    end
+    for _, id in ipairs(outside) do
+        if not SM.IsQuestComplete(id) then return false, { id = id } end
+    end
+    return true
 end
 
 -- Explorer mode reveals a quest once it's done, in the log or passed, or
@@ -481,16 +554,12 @@ function SM.GetQuestLockReason(data, ch, questIndex)
         return string.format(L["Lock Complete Quest Format"], questName)
     end
 
-    local currentQuest = ch.quests and questIndex and ch.quests[questIndex] or nil
-    if questIndex and questIndex > 1 and not (currentQuest and currentQuest.parallel) then
-        local prevIndex = questIndex - 1
-        local prevQuest = ch.quests and ch.quests[prevIndex]
-        while prevQuest and (prevQuest.optional or not SM.IsQuestForPlayer(prevQuest) or SM.ShouldHideQuest(prevQuest)) do
-            prevIndex = prevIndex - 1
-            prevQuest = ch.quests and ch.quests[prevIndex]
-        end
-        if prevQuest and not SM.IsQuestEffectivelyComplete(prevIndex, ch.quests) then
-            return string.format(L["Lock Complete Previous Quest Format"], QuestLink(prevQuest))
+    -- Locked until what it waits on is done: the step before (all of it),
+    -- or the quests it opens after (a branch).
+    if questIndex and ch.quests then
+        local open, waitingOn = SM.IsQuestOpen(ch.quests, questIndex)
+        if not open and waitingOn then
+            return string.format(L["Lock Complete Previous Quest Format"], QuestLink(waitingOn))
         end
     end
 
@@ -558,13 +627,22 @@ local function ChapterCandidate(ch, chIdx, hasPrereqProgress)
                     return Candidate(q, j), "ready"
                 end
                 return nil
-            elseif SM.IsQuestEffectivelyComplete(j - 1, ch.quests) then
+            elseif SM.IsQuestOpen(ch.quests, j) then
                 return Candidate(q, j), "ready"
             end
-            return nil
+            -- Not open yet: a quest further down may be (another branch).
         end
     end
     return nil
+end
+
+-- Quests marked parallel run alongside the step before them (the Valor
+-- family's four weapons, say): a step and the parallel quests right after
+-- it are one step. The index of the step a quest belongs to.
+function SM.GetQuestStepLead(quests, index)
+    local i = index
+    while i > 1 and quests[i] and quests[i].parallel do i = i - 1 end
+    return i
 end
 
 -- The next quest of one chapter, for the next-step tracker. strict: only

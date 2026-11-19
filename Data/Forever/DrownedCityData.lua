@@ -108,7 +108,7 @@ SM.ForeverDrownedCityData = {
                 { id = 205, name = "Troll Witchery", npc = "Brother Nimetz", faction = "Alliance", gameVersions = { forever = true } },
                 { id = 95786, name = "An Acquaintance in Southshore", npc = "Brother Nimetz", faction = "Alliance", gameVersions = { forever = true } },
                 { id = 574, name = "Special Forces", npc = "Sergeant Yohwa", faction = "Alliance", parallel = true, gameVersions = { forever = true } },
-                { id = 202, name = "Colonel Kurzen", npc = "Lieutenant Doren", faction = "Alliance", parallel = true, gameVersions = { forever = true } },
+                { id = 202, name = "Colonel Kurzen", after = 574, npc = "Lieutenant Doren", faction = "Alliance", gameVersions = { forever = true } },
                 { id = 206, name = "Mai'Zoth", npc = "Brother Nimetz", faction = "Alliance", optional = true, parallel = true, gameVersions = { forever = true }, recap = "Nimetz had one more name for me later on. Kurzen was dead, but whatever had turned him was not: an ogre mage called Mai'Zoth, holed up in a mound in the eastern mountains and said to bend minds. Nimetz was positive Mai'Zoth had done it. I brought back the Mind's Eye, the thing the ogre used, and handed it over very carefully." },
             },
         },

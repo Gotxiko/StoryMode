@@ -86,7 +86,7 @@ SM.ArugalData = {
                 { id = 482, name = "Dalaran's Intentions", npc = "Dalar Dawnweaver" },
                 { id = 479, name = "Ambermill Investigations", npc = "Shadow Priest Allister" },
                 { id = 95981, name = "Watching the Roads", npc = "Shadow Priest Allister", parallel = true, gameVersions = { forever = true } },
-                { id = 480, name = "The Weaver", npc = "Shadow Priest Allister" },
+                { id = 480, name = "The Weaver", after = 479, npc = "Shadow Priest Allister" },
             },
         },
         {

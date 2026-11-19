@@ -137,8 +137,8 @@ SM.DuskwoodData = {
                 { id = 324, altIds = { 526 }, name = "The Lost Ingots", npc = "Waterlogged Chest" },
                 { id = 322, name = "Blessed Arm", npc = "Glorin Steelbrow" },
                 { id = 325, name = "Armed and Ready", npc = "Grimand Elmore" },
-                { id = 101, name = "The Totem of Infliction", npc = "Madame Eva" },
-                { id = 55, name = "Morbent Fel", npc = "Sven Yorgen" },
+                { id = 101, name = "The Totem of Infliction", after = {}, npc = "Madame Eva" },
+                { id = 55, name = "Morbent Fel", after = 325, npc = "Sven Yorgen" },
             },
         },
         {

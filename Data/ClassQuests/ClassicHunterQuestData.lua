@@ -91,8 +91,8 @@ SM.ClassicHunterQuestData = {
             quests = {
                 { id = 7632, name = "The Ancient Leaf", npc = "Ancient Petrified Leaf", mapID = 77, x = 0.4800, y = 0.2400, location = "Irontree Woods, Felwood" },
                 { id = 7636, name = "Stave of the Ancients", npc = "Vartrus the Ancient", mapID = 77, x = 0.4800, y = 0.2400, location = "Vartrus the Ancient, Irontree Woods, Felwood" },
-                { id = 7635, name = "A Proper String", npc = "Stoma the Ancient", mapID = 77, x = 0.4800, y = 0.2400, location = "Stoma the Ancient, Irontree Woods, Felwood" },
-                { id = 7634, name = "Ancient Sinew Wrapped Lamina", npc = "Hastat the Ancient", mapID = 77, x = 0.4800, y = 0.2400, location = "Hastat the Ancient, Irontree Woods, Felwood" },
+                { id = 7635, name = "A Proper String", parallel = true, npc = "Stoma the Ancient", mapID = 77, x = 0.4800, y = 0.2400, location = "Stoma the Ancient, Irontree Woods, Felwood" },
+                { id = 7634, name = "Ancient Sinew Wrapped Lamina", parallel = true, npc = "Hastat the Ancient", mapID = 77, x = 0.4800, y = 0.2400, location = "Hastat the Ancient, Irontree Woods, Felwood" },
             },
         },
     },
