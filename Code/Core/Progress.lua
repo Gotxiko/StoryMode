@@ -262,12 +262,13 @@ end
 
 -- Explorer mode reveals a quest once it's done, in the log or passed, or
 -- it's the one the story sends the player to next (nextQuestID, from
--- SM.FindNextQuest); its card shows nothing of the others. The same rule as
--- the cards' (QuestCard.lua SetLegacyState).
+-- SM.FindNextQuest); its card shows nothing of the others. Passing an
+-- optional quest doesn't reveal it: the player never saw it. The same rule
+-- as the cards' (QuestCard.lua SetLegacyState).
 function SM.IsQuestDiscovered(questIndex, chapterQuests, nextQuestID)
     local q = chapterQuests[questIndex]
     if SM.IsQuestEntryInLog(q) or SM.IsQuestEntryComplete(q) then return true end
-    if SM.IsQuestEffectivelyComplete(questIndex, chapterQuests) then return true end
+    if not q.optional and SM.IsQuestEffectivelyComplete(questIndex, chapterQuests) then return true end
     if nextQuestID then
         for _, questID in ipairs(SM.GetQuestIDs(q)) do
             if questID == nextQuestID then return true end

@@ -153,6 +153,8 @@ local closeBtn = CreateFrame("Button", nil, rightSection, "UIPanelCloseButton")
 closeBtn:SetPoint("TOPRIGHT", rightSection, "TOPRIGHT", -4, -4)
 closeBtn:SetScript("OnClick", function() storyFrame:Hide() end)
 if skinLayout then closeBtn:Hide() end  -- the portrait frame has its own
+-- The gamepad's B button clicks the window's CloseButton.
+storyFrame.CloseButton = storyFrame.CloseButton or closeBtn
 
 -- ── Right header  (68px, title + selected story name) ────────────────────────
 local rightHeader = CreateFrame("Frame", nil, rightSection)
@@ -2118,6 +2120,7 @@ end
 storyFrame:SetScript("OnShow", function()
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
     SM.BuildStoryWindow()
+    SM.GamepadFrameShown(storyFrame)
     -- Frame 1: let layout settle so detailScroll has a real width
     C_Timer.After(0, function()
         local w = detailScroll:GetWidth()
@@ -2142,6 +2145,7 @@ end)
 
 storyFrame:SetScript("OnHide", function()
     PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
+    SM.GamepadFrameHidden(storyFrame)
 end)
 
 

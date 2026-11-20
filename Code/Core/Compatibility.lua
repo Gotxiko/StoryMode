@@ -539,3 +539,69 @@ function SM.CanRunMacroScripts()
     end
     return true
 end
+
+-- WoW Forever's gamepad UI moves a cursor between the buttons of the windows
+-- its frame controls manager knows about: A clicks, B clicks the window's
+-- CloseButton, the right stick scrolls. Blizzard's windows join through
+-- ShowUIPanel; ours opens with Show(), so it tells the manager itself, and
+-- smart navigation then finds its buttons on its own. The manager refuses
+-- addon calls in combat, so a close in combat is passed on once it ends.
+local gamepadShownFrames = {}
+local gamepadPendingHides = {}
+local gamepadEvents
+
+local function GamepadCallsBlocked()
+    if InCombatLockdown() then return true end
+    local restrictions = C_RestrictedActions
+    if restrictions and restrictions.IsAddOnRestrictionActive and Enum.AddOnRestrictionType then
+        return restrictions.IsAddOnRestrictionActive(Enum.AddOnRestrictionType.Combat) and true or false
+    end
+    return false
+end
+
+local function GamepadFrameManager()
+    return GamepadMode and GamepadMode.FrameControlsManager
+end
+
+local function GamepadUIEnabled()
+    return GamepadFrameManager() and InputUtil and InputUtil.IsGamepadUIEnabled
+        and InputUtil.IsGamepadUIEnabled() and true or false
+end
+
+local function FlushGamepadHides()
+    if GamepadCallsBlocked() then return end
+    gamepadEvents:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    local manager = GamepadFrameManager()
+    for frame in pairs(gamepadPendingHides) do
+        gamepadPendingHides[frame] = nil
+        if frame:IsShown() then
+            gamepadShownFrames[frame] = true  -- reopened in combat: the manager still has it
+        elseif manager then
+            manager:FrameHidden(frame)
+        end
+    end
+end
+
+function SM.GamepadFrameShown(frame)
+    if not GamepadUIEnabled() or GamepadCallsBlocked() then return end
+    gamepadPendingHides[frame] = nil
+    gamepadShownFrames[frame] = true
+    GamepadFrameManager():FrameShown(frame)
+end
+
+function SM.GamepadFrameHidden(frame)
+    if not gamepadShownFrames[frame] then return end
+    gamepadShownFrames[frame] = nil
+    local manager = GamepadFrameManager()
+    if not manager then return end
+    if GamepadCallsBlocked() then
+        gamepadPendingHides[frame] = true
+        if not gamepadEvents then
+            gamepadEvents = CreateFrame("Frame")
+            gamepadEvents:SetScript("OnEvent", FlushGamepadHides)
+        end
+        gamepadEvents:RegisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    end
+    manager:FrameHidden(frame)
+end

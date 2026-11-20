@@ -700,10 +700,12 @@ local function CreateLegacyQuestCard(parent)
         local done = state == "done"
         -- Explorer mode: a quest counts as discovered once it's done, in the
         -- log or passed, or it's the one the story sends the player to next.
+        -- Passing an optional quest doesn't count: the player never saw it.
         -- Until then its card keeps its place and step, nothing else; the
         -- next quest names its giver but not what they'll ask.
         local explorer = SM.IsExplorerMode and SM.IsExplorerMode()
-        local undiscovered = explorer and not (done or state == "active" or state == "passed" or state == "next")
+        local passed = state == "passed" and not (quest and quest.optional)
+        local undiscovered = explorer and not (done or state == "active" or passed or state == "next")
         local offerOnly = explorer and state == "next"
         self.undiscovered, self.offerOnly = undiscovered, offerOnly
         local objectives = (undiscovered or offerOnly) and {} or GetCardObjectives(self, done)
