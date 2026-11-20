@@ -15,6 +15,7 @@ SM.ForeverStoryLevels = {
     ["Azshara Reclaimed"] = { 44, 60 },
     ["Call of the Elements"] = { 3, 60 },
     ["Cortello's Riddle"] = { 35, 51 },
+    ["Highway Robbery"] = { 30, 40 },
     ["Hunt for Yenniku"] = { 30, 46 },
     ["Legends of Maraudon"] = { 39, 51 },
     ["Linken's Adventure"] = { 47, 56 },

@@ -88,6 +88,7 @@ local contentRegistry = {
     -- WoW Forever's own questlines (Data/Forever).
     { key = "ForeverCozySleepingBagData", category = "Short Stories" },
     { key = "ForeverPaxtonsLibraryData", category = "Short Stories" },
+    { key = "ForeverHighwayRobberyData", category = "Short Stories" },
 
     { key = "SylvanasData", category = "Character Stories" },
     { key = "JainaData", category = "Character Stories" },

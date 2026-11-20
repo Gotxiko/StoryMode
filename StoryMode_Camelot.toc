@@ -94,6 +94,7 @@ Data\Forever\HyjalFoothillsData.lua
 Data\Forever\FrizsLessonsData.lua
 Data\Forever\EchoingOrbsData.lua
 Data\Forever\UnfinishedBusinessData.lua
+Data\Forever\HighwayRobberyData.lua
 Code\Core\Compatibility.lua
 Code\Core\SavedVariables.lua
 Code\Core\Scheduler.lua
