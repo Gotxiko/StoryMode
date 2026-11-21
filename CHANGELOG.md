@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.0.1
+
+### New stories
+- WoW Forever: **The Drowned City**, where an old Gurubashi city has risen off Stranglethorn, and **Highway Robbery**, a looted camp in Desolace that leads to Booty Bay and the Arathi coast
+- **The Green Hills**, **Waking Naralex**, **Are We There, Yeti?**, and **The Shards of Myzrael**, plus **Thunderfury** on Classic Era and Burning Crusade Classic (it comes to Forever when Molten Core opens)
+- **The Drakefire Amulet** now ends in Onyxia's Lair, with her head hung over Stormwind's gates or the Valley of Strength
+- **The Defias Brotherhood** gains Westfall's Toxic Soil chapter on WoW Forever
+- Stories that send you into a dungeon list that dungeon's other quests as optional, so you can pick them all up before you go in
+
+### WoW Forever
+- Search the story list by title, zone, chapter, or quest, and filter it by progress, dungeons, or raids. A story found by one of its quests opens on that quest's card
+- The Journal can read itself aloud in your character's voice: click the speaker beside a chapter, or right-click it to pick a voice
+- With Gamepad turned on in the game's options, the D-pad moves around the Story Mode window, A clicks, and B closes it
+- Quest cards show the dungeon or raid icon, and the window's side tabs have icons that say what they hold
+- Explorer mode no longer pings the map, and an optional quest you skipped stays hidden until you pick it up
+
+### All clients
+- Open or close Story Mode with a key of your choice under Key Bindings
+- Hide the minimap button from its right-click menu; `/sm minimap` brings it back
+- Stories are sorted into Short Stories, Stories, and Epic Stories by every quest they hold, optional ones included, so **The Drakefire Amulet** is now an Epic Story
+- Chapter tooltips count optional quests, and four stories have their chapters in level order
+- The journal only tells an optional quest once you've done it
+
+### Fixes
+- A quest in your log is never hidden by a branch you didn't take, so **The Valley of Bones** stays in Active Stories
+- The Begin Story button no longer causes "Interface action failed" in combat
+- **The Tower of Althalaxx** and **The Missing Courier** show the real Blackfathom Deeps cover
+- Ten quest givers that had a blank portrait now show their model
+
+### Localization
+- All new text is in every client language, with the names the game uses
+
+### Maintenance
+- Bumped addon metadata to `2.0.1`
+
 ## 2.0.0
 
 ### WoW Forever

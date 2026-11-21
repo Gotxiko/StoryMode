@@ -20,10 +20,10 @@ local playerClass
 local playerFaction
 local playerRace
 
--- Stories are sorted by how many quests one character does in them (the
--- longer faction's path): Short Stories up to 9, Stories 10 to 29, Epic
--- Stories 30 or more. The Brazier of Invocation is Epic for its scale, and
--- the Retail stories keep their earlier places.
+-- Stories are sorted by how many quests one character can do in them,
+-- optional ones included, as the story's progress counts them (the longer
+-- faction's path): Short Stories up to 9, Stories 10 to 29, Epic Stories 30
+-- or more. The Retail stories keep their earlier places.
 local contentRegistry = {
     { key = "ArugalData", category = "Stories" },
     { key = "ANewPlagueData", category = "Stories" },
@@ -31,7 +31,6 @@ local contentRegistry = {
     { key = "MissingDiplomatData", category = "Stories" },
     { key = "DarrowshireData", category = "Stories" },
     { key = "FallenHeroData", category = "Stories" },
-    { key = "OnyxiaData", category = "Stories" },
     { key = "ScholomanceData", category = "Stories" },
     { key = "LinkenData", category = "Stories" },
     { key = "MissingCourierData", category = "Stories" },
@@ -43,8 +42,9 @@ local contentRegistry = {
     { key = "MourningRiseData", category = "Stories" },
     { key = "GreenHillsData", category = "Stories" },
     { key = "NaralexData", category = "Stories" },
+    { key = "PrincessMoiraData", category = "Stories" },
+    { key = "HakkariTrailData", category = "Stories" },
     -- WoW Forever's own questlines (Data/Forever).
-    { key = "ForeverRivergladesData", category = "Stories" },
     { key = "ForeverAlcazPrisonData", category = "Stories" },
     { key = "ForeverDrownedCityData", category = "Stories" },
     { key = "ForeverBloodmastersRingData", category = "Stories" },
@@ -56,6 +56,7 @@ local contentRegistry = {
     { key = "ScarletCrusadeData", category = "Epic Stories" },
     { key = "DungeonSetTwoData", category = "Epic Stories" },
     { key = "ShiftingSandsData", category = "Epic Stories" },
+    { key = "OnyxiaData", category = "Epic Stories" },
     { key = "FrozenThroneData", category = "Epic Stories" },
     { key = "JadeForestData", category = "Epic Stories" },
     { key = "DrustvarData", category = "Epic Stories" },
@@ -66,15 +67,14 @@ local contentRegistry = {
     { key = "ForeverShendralasData", category = "Epic Stories" },
     { key = "ForeverAzsharaData", category = "Epic Stories" },
     { key = "ForeverMountHyjalData", category = "Epic Stories" },
+    { key = "ForeverRivergladesData", category = "Epic Stories" },
 
     { key = "VeritistraszData", category = "Short Stories" },
     { key = "TeddiesAndTeaData", category = "Short Stories" },
     { key = "AlthalaxxData", category = "Short Stories" },
     { key = "ScytheOfEluneData", category = "Short Stories" },
     { key = "SavingYennikuData", category = "Short Stories" },
-    { key = "PrincessMoiraData", category = "Short Stories" },
     { key = "MaraudonData", category = "Short Stories" },
-    { key = "HakkariTrailData", category = "Short Stories" },
     { key = "CortellosRiddleData", category = "Short Stories" },
     { key = "HoggerData", category = "Short Stories" },
     { key = "PoorOldBlanchyData", category = "Short Stories" },
