@@ -112,16 +112,24 @@ local function PlaceLikeLegacyWindow(frame)
 end
 
 -- ── Journal page ────────────────────────────────────────────────────────────
--- The Journal tab is a page from Forever's spellbook. The one-page
--- spellbook's parchment covers the detail side, from the vertical divider to
--- the frame's right border and from under the header's gold line to the
--- bottom border. It's cropped to fit, never stretched: its torn left, top and
--- bottom edges show, and its right edge runs on under the border. Each
--- chapter title gets the spellbook's divider, and the text the spellbook's ink.
+-- The Journal tab is the right-hand page of Forever's open spellbook. It
+-- covers the detail side, from the vertical divider to the frame's right
+-- border and from under the header's gold line to the bottom border, scaled
+-- to fit its whole height, never stretched. A sliver of the book's dark cover
+-- shows above, below and right of it, so its top, bottom and right edges read
+-- as they do in the spellbook. On the left is the book's binding: the page's
+-- own inner edge with its gutter shadow. The page is wider than the space, so
+-- the rest of it starts further in, and the gutter's last stretch fades into
+-- it so no step shows.
+-- Each chapter title gets the spellbook's divider, and the text the
+-- spellbook's ink. The journal turns its pages with the spellbook's paging
+-- control (JournalTab.lua).
 
 local JOURNAL = {
-    page = "spellbook-Page-Condensed-C60",          -- 813 x 682, the book's cover around the parchment
-    crop = { left = 17, top = 65, bottom = 675 },   -- the parchment in it, without the cover and blue binding
+    page = "spellbook-Page-Right-C60",              -- 810 x 682, the book's cover around the parchment
+    crop = { right = 810, top = 54, bottom = 682 }, -- the parchment and its edges (top 61, bottom 668, right 790), with a sliver of cover
+    binding = { gutter = 40, fade = 40 },           -- in the art: the page's inner edge, and its fade into the rest of the page
+    pager = { right = 40, bottom = 12 },            -- the paging control, from the page's bottom right
     left = 338, top = 78,                           -- right of the vertical divider, under the gold line
     divider = "spellbook-divider",                  -- 657 x 11: a curl on the left, fading out on the right
     dividerJoin = 120,                              -- a shorter divider leaves out a piece of its solid line from here
@@ -129,13 +137,15 @@ local JOURNAL = {
     ink = { 0.180, 0.106, 0.059 },                  -- SPELLBOOK_FONT_COLOR
 }
 
-local journal = { dividers = {} }
+local journal = { dividers = {}, pieces = {} }
 
 -- The page shows while a story is open on its Journal tab.
 local function UpdateJournalPage()
     local shown = journal.tab == "journal" and journal.story == true
     if journal.page then journal.page:SetShown(shown) end
+    for _, piece in ipairs(journal.pieces) do piece:SetShown(shown) end
     if journal.layer then journal.layer:SetShown(shown) end
+    if journal.pager then journal.pager:SetShown(shown) end
 end
 
 local function GetAtlasFile(atlas)
@@ -145,30 +155,99 @@ local function GetAtlasFile(atlas)
     return info, file
 end
 
--- Draws the parchment on frame, scaled to the page's height and cut off on
--- the right. Without the art the journal keeps its usual look.
+-- A texture on frame showing columns from x1 to x2 of the atlas (in its own
+-- pixels, rows crop.top to crop.bottom), x pixels right of the page's left
+-- edge and w wide; w nil runs it to the frame's right border.
+local function JournalPiece(frame, sublevel, info, file, x1, x2, x, w)
+    local crop = JOURNAL.crop
+    local u = (info.rightTexCoord - info.leftTexCoord) / info.width
+    local v = (info.bottomTexCoord - info.topTexCoord) / info.height
+    local piece = frame:CreateTexture(nil, "BACKGROUND", nil, sublevel)
+    piece:SetPoint("TOPLEFT", frame, "TOPLEFT", JOURNAL.left + x, -JOURNAL.top)
+    if w then
+        piece:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", JOURNAL.left + x, BACKGROUND_INSETS.bottom)
+        piece:SetWidth(w)
+    else
+        piece:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -BACKGROUND_INSETS.right, BACKGROUND_INSETS.bottom)
+    end
+    piece:SetTexture(file)
+    piece:SetTexCoord(info.leftTexCoord + x1 * u, info.leftTexCoord + x2 * u,
+        info.topTexCoord + crop.top * v, info.topTexCoord + crop.bottom * v)
+    piece:Hide()
+    return piece
+end
+
+-- Draws the page on frame. Without the art the journal keeps its usual look.
 local function BuildJournalPage(frame)
     local info, file = GetAtlasFile(JOURNAL.page)
     if not info then return end
-    local crop = JOURNAL.crop
+    local crop, binding = JOURNAL.crop, JOURNAL.binding
     local w = WINDOW_W - JOURNAL.left - BACKGROUND_INSETS.right
     local h = WINDOW_H - JOURNAL.top - BACKGROUND_INSETS.bottom
-    local right = crop.left + w * (crop.bottom - crop.top) / h   -- the same scale across as down
-    if right > info.width then return end
-    local u = (info.rightTexCoord - info.leftTexCoord) / info.width
-    local v = (info.bottomTexCoord - info.topTexCoord) / info.height
+    local scale = h / (crop.bottom - crop.top)     -- screen pixels to one of the art's
+    local right = math.min(crop.right, info.width)
 
-    local page = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
-    page:SetPoint("TOPLEFT", frame, "TOPLEFT", JOURNAL.left, -JOURNAL.top)
-    page:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -BACKGROUND_INSETS.right, BACKGROUND_INSETS.bottom)
-    page:SetTexture(file)
-    page:SetTexCoord(info.leftTexCoord + crop.left * u, info.leftTexCoord + right * u,
-        info.topTexCoord + crop.top * v, info.topTexCoord + crop.bottom * v)
-    page:Hide()
-    journal.page = page
+    local gutterW = math.floor(binding.gutter * scale + 0.5)
+    local fadeW = math.floor(binding.fade * scale + 0.5)
+    local x = gutterW                              -- where the rest of the page starts
+    local restLeft = right - (w - x) / scale
+    if restLeft < binding.gutter + binding.fade then return end
+
+    -- The rest of the page, to its right edge. The paging control anchors to it.
+    journal.page = JournalPiece(frame, 2, info, file, restLeft, right, x)
+    table.insert(journal.pieces, JournalPiece(frame, 2, info, file, 0, binding.gutter, 0, gutterW))
+    -- The gutter's last stretch over the page's start, fading out.
+    if CreateColor then
+        local fade = JournalPiece(frame, 3, info, file, binding.gutter, binding.gutter + binding.fade, x, fadeW)
+        fade:SetGradient("HORIZONTAL", CreateColor(1, 1, 1, 1), CreateColor(1, 1, 1, 0))
+        table.insert(journal.pieces, fade)
+    end
 
     local color = SPELLBOOK_FONT_COLOR
     window.JournalInk = (color and color.GetRGB) and { color:GetRGB() } or JOURNAL.ink
+end
+
+-- The frame over the journal's text that shows and hides with the page: the
+-- dividers and the text of a chapter that runs on to the next page live on
+-- it. nil where there's no journal page.
+function window.GetJournalLayer()
+    if not journal.page then return nil end
+    if not journal.layer then
+        local child = SM.GetDetailChild()
+        journal.layer = CreateFrame("Frame", nil, child)
+        journal.layer:SetAllPoints(child)
+        UpdateJournalPage()
+    end
+    return journal.layer
+end
+
+-- The spellbook's paging control ("Page 1/2" and its arrows) at the page's
+-- bottom right, made once on parent; host:OnPageChanged() runs when it
+-- turns. nil where there's no journal page or no paging control.
+function window.GetJournalPager(parent, host)
+    if not journal.page then return nil end
+    if journal.pager then return journal.pager end
+    if not (C_XMLUtil and C_XMLUtil.GetTemplateInfo and C_XMLUtil.GetTemplateInfo("PagingControlsHorizontalTemplate")) then
+        return nil
+    end
+    local pager = CreateFrame("Frame", nil, parent, "PagingControlsHorizontalTemplate")
+    pager:SetPoint("BOTTOMRIGHT", journal.page, "BOTTOMRIGHT", -JOURNAL.pager.right, JOURNAL.pager.bottom)
+    pager:SetFrameLevel(parent:GetFrameLevel() + 20)
+    -- As the spellbook sets it up (Blizzard_SpellBookFrame.xml).
+    pager.spacing = 8
+    pager.hideWhenSinglePage = true
+    if SOUNDKIT then
+        pager.prevPageSound = SOUNDKIT.IG_ABILITY_PAGE_TURN
+        pager.nextPageSound = SOUNDKIT.IG_ABILITY_PAGE_TURN
+    end
+    pager.PageText:SetFontObject(SystemFont_Med3 or GameFontHighlight)
+    local ink = window.JournalInk or JOURNAL.ink
+    pager.PageText:SetTextColor(ink[1], ink[2], ink[3])
+    pager:SetOverridePagedContentFrame(host)
+    pager:UpdateControls()
+    journal.pager = pager
+    UpdateJournalPage()
+    return pager
 end
 
 -- Puts divider number index under a chapter title, as wide as the title's
@@ -181,14 +260,8 @@ function window.PlaceJournalDivider(index, title, width)
     if not divider then
         local info, file = GetAtlasFile(JOURNAL.divider)
         if not info then return nil end
-        if not journal.layer then
-            -- Dividers scroll with the text and hide with the page.
-            local child = SM.GetDetailChild()
-            journal.layer = CreateFrame("Frame", nil, child)
-            journal.layer:SetAllPoints(child)
-            UpdateJournalPage()
-        end
-        divider = CreateFrame("Frame", nil, journal.layer)
+        -- Dividers move with the text and hide with the page.
+        divider = CreateFrame("Frame", nil, window.GetJournalLayer())
         divider:SetHeight(info.height)
         divider.info = info
         divider.head = divider:CreateTexture(nil, "ARTWORK")

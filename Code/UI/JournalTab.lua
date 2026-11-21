@@ -246,6 +246,7 @@ function Voice:SpeakSegment()
     local segment = self.segments and self.segments[self.pos]
     if not segment then return self:Finish() end
     self.chapter = segment.chapter
+    if Voice.onSegment then Voice.onSegment(segment) end
     self.serial = self.serial + 1
     local serial = self.serial
     self.speaking, self.utterance, self.utterance2 = true, nil, nil
@@ -271,16 +272,28 @@ function Voice:SpeakNext(delay)
     end)
 end
 
--- shown: the journal's entries in order ({ chapter, title, recap }).
+local function SplitParagraphs(text)
+    local paragraphs = {}
+    for paragraph in (text .. "\n\n"):gmatch("(.-)\n\n") do
+        if paragraph:find("%S") then paragraphs[#paragraphs + 1] = paragraph end
+    end
+    return paragraphs
+end
+
+-- shown: the journal's entries in order ({ chapter, title, recap }). Each
+-- line knows its entry and paragraph (0 for the title), so the journal's
+-- pages can follow the reading.
 function Voice:Play(data, shown, index)
     local segments = {}
     for i = index, #shown do
         local item = shown[i]
-        segments[#segments + 1] = { chapter = item.chapter, text = SpeechText(item.title or ""), pause = CHAPTER_PAUSE }
-        for line in item.recap:gmatch("[^\n]+") do
-            local text = SpeechText(line)
-            if text ~= "" then
-                segments[#segments + 1] = { chapter = item.chapter, text = text, pause = PARAGRAPH_PAUSE }
+        segments[#segments + 1] = { chapter = item.chapter, entry = i, paragraph = 0, text = SpeechText(item.title or ""), pause = CHAPTER_PAUSE }
+        for p, paragraph in ipairs(SplitParagraphs(item.recap)) do
+            for line in paragraph:gmatch("[^\n]+") do
+                local text = SpeechText(line)
+                if text ~= "" then
+                    segments[#segments + 1] = { chapter = item.chapter, entry = i, paragraph = p, text = text, pause = PARAGRAPH_PAUSE }
+                end
             end
         end
     end
@@ -404,10 +417,284 @@ local function GetVoiceButton(entry, parent)
     -- Leaving the journal (another tab or story, or closing the window)
     -- stops the reading.
     button:SetScript("OnHide", function(self)
+        if Voice.pageTurning then return end
         if Voice.segments and Voice.chapter == self.chapter then Voice:Stop() end
     end)
     entry.voice = button
     return button
+end
+
+-- ── Pages (WoW Forever) ─────────────────────────────────────────────
+-- On WoW Forever the journal is a spellbook page, and it turns its pages as
+-- the spellbook does instead of scrolling, with the spellbook's paging
+-- control at the bottom right (ForeverWindow.lua). Chapters flow from page to
+-- page a paragraph at a time: a title never ends a page without its first
+-- paragraph, and a chapter that runs on carries on at the top of the next
+-- page. Read aloud, the journal turns to the page being read.
+
+local PAGE = {
+    top = 18,          -- the header's top, and the text's on later pages
+    headerGap = 18,    -- from the subline to the first chapter title
+    titleGap = 22,     -- from a title's top line to its text: divider and gaps
+    entryGap = 20,     -- between a chapter's text and the next title
+    bottom = 56,       -- kept clear above the page's bottom for the paging control
+    fallbackH = 490,   -- the page's height before the window has been laid out
+}
+
+local pages = { list = {}, where = {}, current = 1 }
+local pageHost = {}
+local pageBodies = {}
+local measureText
+
+-- The height text takes in a body's font at width.
+local function TextHeight(text, width, ref)
+    if not measureText then
+        measureText = SM.NoShadow(SM.GetDetailChild():CreateFontString(nil, "ARTWORK", "QuestFont"))
+        measureText:SetJustifyH("LEFT")
+        measureText:SetWordWrap(true)
+        measureText:SetPoint("TOPLEFT", SM.GetDetailChild(), "TOPLEFT", 0, 0)
+        measureText:SetAlpha(0)
+    end
+    local font, size, flags = ref:GetFont()
+    if font then measureText:SetFont(font, size, flags) end
+    measureText:SetSpacing(ref:GetSpacing() or 4)
+    measureText:SetWidth(width)
+    measureText:SetText(text)
+    return measureText:GetStringHeight() or 0
+end
+
+local function GetPageBody(index, ref)
+    local body = pageBodies[index]
+    if not body then
+        body = SM.NoShadow(SM.ForeverWindow.GetJournalLayer():CreateFontString(nil, "ARTWORK", "QuestFont"))
+        body:SetJustifyH("LEFT")
+        body:SetWordWrap(true)
+        pageBodies[index] = body
+    end
+    local font, size, flags = ref:GetFont()
+    if font then body:SetFont(font, size, flags) end
+    body:SetSpacing(ref:GetSpacing() or 4)
+    body:SetTextColor(ref:GetTextColor())
+    return body
+end
+
+-- Splits the entries ({ titleH, paragraphs }) into pages of blocks, each
+-- with its top: a chapter's title, or a run of its paragraphs. where[e][p]
+-- is the page of entry e's paragraph p (0: its title).
+local function BuildPages(entries, width, ref, firstTop, limit)
+    local list, where = { {} }, {}
+    local page, y = list[1], firstTop
+    local function NewPage()
+        page = {}
+        list[#list + 1] = page
+        y = PAGE.top
+    end
+    for e, entry in ipairs(entries) do
+        where[e] = {}
+        local paragraphs = entry.paragraphs
+        local titleH = entry.titleH + PAGE.titleGap
+        local firstH = paragraphs[1] and TextHeight(paragraphs[1], width, ref) or 0
+        if #page > 0 and y + titleH + firstH > limit then NewPage() end
+        page[#page + 1] = { entry = e, top = y }
+        where[e][0] = #list
+        y = y + titleH
+
+        local run, runTop, runH = {}, y, 0
+        local function EndRun()
+            if #run == 0 then return end
+            page[#page + 1] = { entry = e, top = runTop, text = table.concat(run, "\n\n") }
+            y = runTop + runH
+        end
+        for p, paragraph in ipairs(paragraphs) do
+            local text = #run > 0 and (table.concat(run, "\n\n") .. "\n\n" .. paragraph) or paragraph
+            local h = TextHeight(text, width, ref)
+            if #run > 0 and runTop + h > limit then
+                EndRun()
+                NewPage()
+                run, runTop, runH = { paragraph }, y, TextHeight(paragraph, width, ref)
+            else
+                run[#run + 1] = paragraph
+                runH = h
+            end
+            where[e][p] = #list
+        end
+        EndRun()
+        y = y + PAGE.entryGap
+    end
+    return list, where
+end
+
+-- Shows page n of the journal laid out last.
+local function ShowPage(n)
+    local layout = pages.layout
+    if not layout then return end
+    n = math.max(1, math.min(n, #pages.list))
+    pages.current = n
+    local ui = SM.DetailUI
+    local detailChild, CP, contentW = ui.detailChild, ui.CP, layout.contentW
+    local foreverWindow = SM.ForeverWindow
+
+    Voice.pageTurning = true
+    for _, entry in ipairs(ui.sJournalEntries) do
+        entry.title:Hide()
+        entry.body:Hide()
+        if entry.voice then entry.voice:Hide() end
+    end
+    for _, body in ipairs(pageBodies) do body:Hide() end
+    foreverWindow.HideJournalDividers(1)
+    Voice.pageTurning = false
+
+    ui.sJournalHeader:SetShown(n == 1)
+    ui.sJournalSubline:SetShown(n == 1)
+
+    local bodyIndex = 0
+    for _, block in ipairs(pages.list[n] or {}) do
+        local item = layout.shown[block.entry]
+        local entry = SM.GetJournalEntry(block.entry)
+        if block.text then
+            bodyIndex = bodyIndex + 1
+            local body = GetPageBody(bodyIndex, entry.body)
+            body:ClearAllPoints()
+            body:SetPoint("TOPLEFT", detailChild, "TOPLEFT", CP, -block.top)
+            body:SetWidth(contentW)
+            body:SetText(block.text)
+            body:Show()
+        else
+            entry.title:ClearAllPoints()
+            entry.title:SetPoint("TOPLEFT", detailChild, "TOPLEFT", CP, -block.top)
+            entry.title:SetPoint("TOPRIGHT", detailChild, "TOPRIGHT", -CP, -block.top)
+            entry.title:SetText(item.title)
+            entry.title:Show()
+            foreverWindow.PlaceJournalDivider(block.entry, entry.title, contentW)
+            local voice = layout.canReadAloud and GetVoiceButton(entry, detailChild)
+            if voice then
+                voice.chapter, voice.data, voice.journal, voice.index = item.chapter, layout.data, layout.shown, block.entry
+                voice:ClearAllPoints()
+                voice:SetPoint("RIGHT", entry.title, "RIGHT", 0, 0)
+                voice.icon:SetVertexColor(entry.title:GetTextColor())
+                voice:Show()
+            end
+        end
+    end
+    Voice.UpdateButtons()
+
+    local pager = pages.pager
+    if pager then
+        pager:SetMaxPages(#pages.list)
+        pager.currentPage = n
+        pager:UpdateControls()
+    end
+end
+
+function pageHost:OnPageChanged()
+    if pages.pager then ShowPage(pages.pager:GetCurrentPage()) end
+end
+
+-- The reading voice turns to the page it's reading.
+Voice.onSegment = function(segment)
+    local layer = SM.ForeverWindow and SM.ForeverWindow.GetJournalLayer and SM.ForeverWindow.GetJournalLayer()
+    if not (pages.layout and pages.layout.data == Voice.data and layer and layer:IsVisible()) then return end
+    local where = pages.where[segment.entry]
+    local page = where and where[segment.paragraph or 0]
+    if page and page ~= pages.current then ShowPage(page) end
+end
+
+-- The mouse wheel turns the pages, and leaving the journal (another tab, no
+-- story, or closing the window) stops the reading, wherever its chapter is.
+local function HookPageFrames(detailScroll, layer)
+    if pages.hooked then return end
+    pages.hooked = true
+    detailScroll:HookScript("OnMouseWheel", function(_, delta)
+        local pager = pages.pager
+        if not (pager and pages.layout and layer:IsVisible() and #pages.list > 1) then return end
+        if delta > 0 then pager:PreviousPage() else pager:NextPage() end
+    end)
+    layer:HookScript("OnHide", function() Voice:Stop() end)
+end
+
+local function LayoutJournalPages(data, contentW)
+    local ui = SM.DetailUI
+    local detailChild, detailScroll, CP = ui.detailChild, ui.detailScroll, ui.CP
+    local sJournalHeader, sJournalSubline = ui.sJournalHeader, ui.sJournalSubline
+    local sJournalEmptyTitle, sJournalEmptyText = ui.sJournalEmptyTitle, ui.sJournalEmptyText
+    local foreverWindow = SM.ForeverWindow
+    local layer = foreverWindow.GetJournalLayer()
+    pages.pager = pages.pager or foreverWindow.GetJournalPager(detailScroll, pageHost)
+    HookPageFrames(detailScroll, layer)
+
+    if Voice.data and Voice.data ~= data then Voice:Stop() end
+    if contentW <= 20 then contentW = (detailChild:GetWidth() or 0) - CP * 2 end
+    if contentW <= 20 then contentW = 500 end
+    local viewH = detailScroll:GetHeight() or 0
+    if viewH < 200 then viewH = PAGE.fallbackH end
+
+    local quest = SM.FindNextQuest(data)
+    local done = SM.GetCampaignProgress(data)
+    SM.FactionUI:HideAll()
+    ui.sFactionHeader:Hide()
+
+    sJournalHeader:SetText(quest and L["Journal Header"] or L["Journal Header Complete"])
+    sJournalHeader:ClearAllPoints()
+    sJournalHeader:SetPoint("TOP", detailChild, "TOP", 0, -PAGE.top)
+    sJournalSubline:ClearAllPoints()
+    sJournalSubline:SetPoint("TOP", sJournalHeader, "BOTTOM", 0, -4)
+    sJournalSubline:SetPoint("LEFT", detailChild, "LEFT", CP, 0)
+    sJournalSubline:SetPoint("RIGHT", detailChild, "RIGHT", -CP, 0)
+    sJournalSubline:SetWidth(contentW)
+
+    -- The finished chapters' entries, as the scrolling journal has them.
+    local shown, entries = {}, {}
+    for _, ch in ipairs(SM.GetAllChapters(data)) do
+        local cd, ct = SM.GetChapterProgress(ch)
+        local recap = cd == ct and ct > 0 and GetJournalRecap(ch)
+        if recap then
+            local index = #shown + 1
+            shown[index] = { chapter = ch, title = ch.chapter, recap = recap }
+            local entry = SM.GetJournalEntry(index)
+            entry.title:SetJustifyH("LEFT")
+            entry.title:SetText(ch.chapter)
+            entries[index] = { titleH = entry.title:GetStringHeight() or 16, paragraphs = SplitParagraphs(recap) }
+        end
+    end
+
+    if pages.layout and pages.layout.data ~= data then pages.current = 1 end
+    pages.layout = { data = data, shown = shown, contentW = contentW, canReadAloud = SM.CanReadJournalAloud() }
+
+    if #shown == 0 then
+        -- Nothing to tell yet: one page with the empty message.
+        pages.list, pages.where, pages.current = { {} }, {}, 1
+        ShowPage(1)
+        sJournalHeader:Hide()
+        sJournalSubline:Hide()
+        sJournalEmptyTitle:ClearAllPoints()
+        sJournalEmptyTitle:SetPoint("TOP", detailChild, "TOP", 0, -math.max(150, math.floor(viewH * 0.42)))
+        sJournalEmptyTitle:SetPoint("LEFT", detailChild, "LEFT", CP, 0)
+        sJournalEmptyTitle:SetPoint("RIGHT", detailChild, "RIGHT", -CP, 0)
+        if done > 0 then
+            sJournalEmptyTitle:SetText(L["Journal No Recaps Title"])
+            sJournalEmptyText:SetText(L["Journal No Recaps Text"])
+        else
+            sJournalEmptyTitle:SetText(L["Journal Empty Title"])
+            sJournalEmptyText:SetText(L["Journal Empty Text"])
+        end
+        sJournalEmptyTitle:Show()
+        sJournalEmptyText:ClearAllPoints()
+        sJournalEmptyText:SetPoint("TOPLEFT", sJournalEmptyTitle, "BOTTOMLEFT", 0, -8)
+        sJournalEmptyText:SetPoint("TOPRIGHT", sJournalEmptyTitle, "BOTTOMRIGHT", 0, -8)
+        sJournalEmptyText:SetWidth(contentW)
+        sJournalEmptyText:Show()
+    else
+        sJournalEmptyTitle:Hide()
+        sJournalEmptyText:Hide()
+        local headerH = (sJournalHeader:GetStringHeight() or 16) + 4 + (sJournalSubline:GetStringHeight() or 14)
+        local ref = SM.GetJournalEntry(1).body
+        pages.list, pages.where = BuildPages(entries, contentW, ref, PAGE.top + headerH + PAGE.headerGap, viewH - PAGE.bottom)
+        ShowPage(pages.current)
+    end
+
+    -- A page never scrolls.
+    detailChild:SetHeight(viewH)
+    detailScroll:SetVerticalScroll(0)
 end
 
 function SM.LayoutJournalTab(data, w, contentW, visibleContentW)
@@ -430,6 +717,18 @@ function SM.LayoutJournalTab(data, w, contentW, visibleContentW)
     if ink then
         for _, text in ipairs({ sJournalHeader, sJournalSubline, sJournalEmptyTitle, sJournalEmptyText }) do
             text:SetTextColor(ink[1], ink[2], ink[3])
+        end
+        for _, entry in ipairs(sJournalEntries) do
+            entry.title:SetTextColor(ink[1], ink[2], ink[3])
+            entry.body:SetTextColor(ink[1], ink[2], ink[3])
+        end
+        if foreverWindow.GetJournalLayer and foreverWindow.GetJournalLayer() then
+            for i = 1, #SM.GetAllChapters(data) do
+                local entry = SM.GetJournalEntry(i)
+                entry.title:SetTextColor(ink[1], ink[2], ink[3])
+                entry.body:SetTextColor(ink[1], ink[2], ink[3])
+            end
+            return LayoutJournalPages(data, contentW)
         end
     end
         -- ── JOURNAL TAB layout ──────────────────────────────────────────
